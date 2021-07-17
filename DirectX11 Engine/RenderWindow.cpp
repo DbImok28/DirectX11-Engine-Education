@@ -1,0 +1,92 @@
+#include "RenderWindow.hpp"
+#include "ErrorLogger.hpp"
+
+
+
+//RenderWindow::RenderWindow(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
+//: hInst(hInstance), window_title(window_title), window_title_wide(StringConverter::StringToWide(window_title)),
+//window_class(window_class), window_class_wide(StringConverter::StringToWide(window_class)), width(width), height(height)
+//{
+//}
+bool RenderWindow::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
+{
+    hInst = hInstance;
+    this->window_title = window_title;
+    this->window_title_wide = StringConverter::StringToWide(window_title);
+    this->window_class = window_class;
+    this->window_class_wide = StringConverter::StringToWide(window_class);
+    this->width = width;
+    this->height = height;
+
+    RegisterWindowClass();
+
+    hWnd = CreateWindowEx(
+        0,
+        this->window_class_wide.c_str(),
+        this->window_title_wide.c_str(),
+        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+        0, 0,
+        this->width, this->height,
+        NULL, NULL, hInst, nullptr
+    );
+    if (hWnd == NULL)
+    {
+        ErrorLogger::Log(GetLastError(), "Error while creating window. CreateWindowEX. " + this->window_title);
+        return false;
+    }
+
+    ShowWindow(hWnd, SW_SHOW);
+    SetForegroundWindow(hWnd);
+    SetFocus(hWnd);
+
+    return true;
+}
+
+bool RenderWindow::ProcessMessages()
+{
+    MSG msg;
+    ZeroMemory(&msg, sizeof(msg));
+    if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    if (msg.message == WM_NULL)
+    {
+        if (!IsWindow(hWnd))
+        {
+            hWnd = NULL;
+            UnregisterClass(window_class_wide.c_str(), hInst);
+            return false;
+        }
+    }
+    return true;
+}
+
+RenderWindow::~RenderWindow()
+{
+    if (hWnd != NULL)
+    {
+        UnregisterClass(window_class_wide.c_str(), hInst);
+        DestroyWindow(hWnd);
+    }
+}
+
+void RenderWindow::RegisterWindowClass()
+{
+    WNDCLASSEX wc;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.lpfnWndProc = DefWindowProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = hInst;
+    wc.hIcon = NULL;
+    wc.hIconSm = NULL;
+    wc.hCursor = LoadCursor(NULL, (LPTSTR)IDC_ARROW);
+    wc.hbrBackground = NULL;
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = this->window_class_wide.c_str();
+    wc.cbSize = sizeof(WNDCLASSEX);
+
+    RegisterClassEx(&wc);
+}
