@@ -1,6 +1,8 @@
 #pragma once
 #include "ErrorLogger.hpp"
 
+class WindowContainer;
+
 class RenderWindow
 {
 public:
@@ -10,7 +12,7 @@ public:
 	RenderWindow& operator=(RenderWindow&&) = delete;
 	RenderWindow() {}
 	//RenderWindow(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);
-	bool Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);
+	bool Initialize(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height);
 	bool ProcessMessages();
 	~RenderWindow();
 private:

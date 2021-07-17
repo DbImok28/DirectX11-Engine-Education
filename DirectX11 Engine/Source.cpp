@@ -1,4 +1,4 @@
-#include "RenderWindow.hpp"
+#include "Engine.hpp"
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "DirectXTK.lib")
 
@@ -10,11 +10,11 @@ int APIENTRY wWinMain(
 	_In_		LPWSTR		lpCmdLine,
 	_In_		int			nCmdShow)
 {
-	RenderWindow window;
+	Engine engine;
 
-	window.Initialize(hInstance,"DirectX11 Engine","directx11_engine",600,400);
+	engine.Initialize(hInstance,"DirectX11 Engine","directx11_engine",600,400);
 
-	while (window.ProcessMessages() == true)
+	while (engine.ProcessMessages() == true)
 	{
 
 	}

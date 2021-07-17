@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="ErrorLogger.cpp" />
+    <ClCompile Include="KeyboardEvent.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StringConverter.cpp" />
@@ -158,9 +159,10 @@
   <ItemGroup>
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="ErrorLogger.hpp" />
+    <ClInclude Include="KeyboardEvent.hpp" />
     <ClInclude Include="RenderWindow.hpp" />
     <ClInclude Include="StringConverter.hpp" />
-    <ClInclude Include="WindowContainer.h" />
+    <ClInclude Include="WindowContainer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
