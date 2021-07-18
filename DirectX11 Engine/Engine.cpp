@@ -12,5 +12,18 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-
+    while(!keyboard.CharBufferIsEmpty()){
+        auto ch = keyboard.ReadChar();
+        std::string outmsg = "Char: ";
+        outmsg += ch;
+        outmsg += "\n";
+        OutputDebugStringA(outmsg.c_str());
+    }
+    while (!keyboard.KeyBufferIsEmpty()) {
+        auto ch = keyboard.ReadKey();
+        std::string outmsg = "Key: ";
+        outmsg += ch.GetKeyCode();
+        outmsg += "\n";
+        OutputDebugStringA(outmsg.c_str());
+    }
 }

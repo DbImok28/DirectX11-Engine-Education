@@ -39,7 +39,10 @@
     <ClCompile Include="WindowContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KeyboardEvent.cpp">
+    <ClCompile Include="Keyboard\KeyboardClass.cpp">
+      <Filter>Source Files\Keyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard\KeyboardEvent.cpp">
       <Filter>Source Files\Keyboard</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,11 +59,14 @@
     <ClInclude Include="Engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KeyboardEvent.hpp">
-      <Filter>Header Files\Keyboard</Filter>
-    </ClInclude>
     <ClInclude Include="WindowContainer.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard\KeyboardClass.hpp">
+      <Filter>Header Files\Keyboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard\KeyboardEvent.hpp">
+      <Filter>Header Files\Keyboard</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

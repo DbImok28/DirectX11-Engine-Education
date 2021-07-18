@@ -16,7 +16,7 @@ int APIENTRY wWinMain(
 
 	while (engine.ProcessMessages() == true)
 	{
-
+		engine.Update();
 	}
 	return 0;
 }
