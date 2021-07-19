@@ -1,6 +1,4 @@
 #include "Engine.hpp"
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "DirectXTK.lib")
 
 #define HR_CHECK(check, msg) HRESULT hr = check; if (FAILED(hr)) ErrorLogger::Log(hr, msg);
 
@@ -17,6 +15,7 @@ int APIENTRY wWinMain(
 	while (engine.ProcessMessages() == true)
 	{
 		engine.Update();
+		engine.RenderFrame();
 	}
 	return 0;
 }

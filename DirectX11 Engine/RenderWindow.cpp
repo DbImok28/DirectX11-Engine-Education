@@ -46,7 +46,7 @@ bool RenderWindow::ProcessMessages()
 {
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
-    if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+    while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -61,6 +61,11 @@ bool RenderWindow::ProcessMessages()
         }
     }
     return true;
+}
+
+HWND RenderWindow::GetHWND() const noexcept
+{
+    return hWnd;
 }
 
 RenderWindow::~RenderWindow()
