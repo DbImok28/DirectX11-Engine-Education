@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include <sstream>
 
 bool Engine::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
@@ -12,18 +13,16 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-    while(!keyboard.CharBufferIsEmpty()){
+    while(!keyboard.CharBufferIsEmpty())
+    {
         auto ch = keyboard.ReadChar();
-        std::string outmsg = "Char: ";
-        outmsg += ch;
-        outmsg += "\n";
-        OutputDebugStringA(outmsg.c_str());
     }
-    while (!keyboard.KeyBufferIsEmpty()) {
-        auto ch = keyboard.ReadKey();
-        std::string outmsg = "Key: ";
-        outmsg += ch.GetKeyCode();
-        outmsg += "\n";
-        OutputDebugStringA(outmsg.c_str());
+    while (!keyboard.KeyBufferIsEmpty()) 
+    {
+        auto e = keyboard.ReadKey();
+    }
+    while (!mouse.EventBufferIsEmpty())
+    {
+        auto e = mouse.ReadEvent();
     }
 }
