@@ -1,5 +1,6 @@
 #pragma once
 #include "AdapterReader.hpp"
+#include "Shaders.hpp"
 
 class Graphics
 {
@@ -8,10 +9,15 @@ public:
 	void RenderFrame();
 private:
 	bool InitializeDirectX(HWND hWnd, int width, int height);
+	bool InitializeShader();
 
 	com_ptr<ID3D11Device> device;
 	com_ptr<ID3D11DeviceContext> deviceContext;
 	com_ptr<IDXGISwapChain> swapchain;
 	com_ptr<ID3D11RenderTargetView> renderTargetView;
+
+	com_ptr<ID3D11InputLayout> inputLoyout;
+
+	VertexShader vertexShader;
 };
 

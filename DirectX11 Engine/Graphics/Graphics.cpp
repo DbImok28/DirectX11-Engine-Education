@@ -4,9 +4,22 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 {
 	if (!InitializeDirectX(hWnd, width, height))
 		return false;
+	if (!InitializeShader())
+		return false;
 	return true;
 }
-
+/*
+*1  Input Assembler		(IA) Stage
+*2  Vertex Shader		(VS) Stage
+3  Hull Shader			(HS) Stage
+4  Tessellator Shader	(TS) Stage
+5  Domain Shader		(DS) Stage
+6  Geometry Shader		(GS) Stage
+7  Stream Output		(SO) Stage
+8  Rasterizer			(RS) Stage
+9  Pixel Shader			(PS) Stage
+10 Output Merger		(OM) Stage
+*/
 void Graphics::RenderFrame()
 {
 	float bgcolor[] = { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -44,26 +57,20 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	HRESULT hr = 0;
-	for (UINT i = 0; i < adapters.size(); i++)
-	{
-		hr = D3D11CreateDeviceAndSwapChain(
-			adapters[i].pAdapter,			// Adapter
-			D3D_DRIVER_TYPE_UNKNOWN,		// DriverType
-			NULL,							// Software
-			NULL,							// Flags
-			NULL,							// FeatureLevels
-			0,								// FeatureLevels
-			D3D11_SDK_VERSION,				// SDKVersion
-			&scd,							// SwapChainDesc
-			swapchain.GetAddressOf(),		// SwapChain
-			device.GetAddressOf(),			// Device
-			NULL,							// FeatureLevel
-			deviceContext.GetAddressOf()	// ImmediateContext
-		);
-		if (SUCCEEDED(hr))
-			break;
-	}
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(
+		adapters[0].pAdapter,			// Adapter
+		D3D_DRIVER_TYPE_UNKNOWN,		// DriverType
+		NULL,							// Software
+		NULL,							// Flags
+		NULL,							// FeatureLevels
+		0,								// FeatureLevels
+		D3D11_SDK_VERSION,				// SDKVersion
+		&scd,							// SwapChainDesc
+		swapchain.GetAddressOf(),		// SwapChain
+		device.GetAddressOf(),			// Device
+		NULL,							// FeatureLevel
+		deviceContext.GetAddressOf()	// ImmediateContext
+	);
 	if (FAILED(hr))
 	{
 		ErrorLogger::Log(hr, "Failed to create device and swapchain.");
@@ -74,7 +81,7 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	hr = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
 	if (FAILED(hr))
 	{
-		ErrorLogger::Log(hr, "GetBuffer Failed.");
+		ErrorLogger::Log(hr, "GetBuffer. Failed to create backBuffer.");
 		return false;
 	}
 
@@ -86,6 +93,48 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	}
 
 	this->deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), NULL);
+
+	return true;
+}
+
+bool Graphics::InitializeShader()
+{
+	std::wstring shaderfolder = L"";
+	#pragma region ShaderFolder
+	if (IsDebuggerPresent() == TRUE)
+	{
+	#ifdef _DEBUG // Debug
+	#ifdef _WIN64 //x64
+			shaderfolder = L"..\\x64\\Debug\\"; // x64 Debug
+	#else		  // x86
+			shaderfolder = L"..\\Debug\\"; // x86 Debug
+	#endif
+	#else // Release
+	#ifdef _WIN64 // x64
+			shaderfolder = L"..\\x64\\Release\\"; // x64 Release
+	#else		  // x86
+			shaderfolder = L"..\\Release\\"; // x86 Release
+	#endif
+	#endif
+	}
+	#pragma endregion
+
+	if (vertexShader.Initalize(device, shaderfolder + L"VertexShader.cso"))
+	{
+		return false;
+	}
+	D3D11_INPUT_ELEMENT_DESC loyout[]
+	{
+		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	UINT size = ARRAYSIZE(loyout);
+
+	HRESULT hr = device->CreateInputLayout(loyout, size, vertexShader.GetBuffer()->GetBufferPointer(), vertexShader.GetBuffer()->GetBufferSize(), inputLoyout.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "InitializeShader. Failed to create InputLayout.");
+		return false;
+	}
 
 	return true;
 }
