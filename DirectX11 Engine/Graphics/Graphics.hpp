@@ -16,8 +16,6 @@ private:
 	com_ptr<IDXGISwapChain> swapchain;
 	com_ptr<ID3D11RenderTargetView> renderTargetView;
 
-	com_ptr<ID3D11InputLayout> inputLoyout;
-
 	VertexShader vertexShader;
 };
 

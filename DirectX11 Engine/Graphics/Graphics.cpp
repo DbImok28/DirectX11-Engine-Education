@@ -100,22 +100,16 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 
 bool Graphics::InitializeShader()
 {
-	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso"))
-	{
-		return false;
-	}
 	D3D11_INPUT_ELEMENT_DESC loyout[]
 	{
 		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	UINT size = ARRAYSIZE(loyout);
+	UINT numElements = ARRAYSIZE(loyout);
 
-	HRESULT hr = device->CreateInputLayout(loyout, size, vertexShader.GetBuffer()->GetBufferPointer(), vertexShader.GetBuffer()->GetBufferSize(), inputLoyout.GetAddressOf());
-	if (FAILED(hr))
+	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso", loyout, numElements))
 	{
-		ErrorLogger::Log(hr, "InitializeShader. Failed to create InputLayout.");
 		return false;
 	}
-
+	
 	return true;
 }

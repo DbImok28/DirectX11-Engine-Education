@@ -3,7 +3,7 @@
 std::wstring Paths::GetPathToExeFolder() noexcept
 {
 	WCHAR filePath[MAX_PATH];
-	GetModuleFileNameW(0, filePath, MAX_PATH);
+	GetModuleFileNameW(NULL, filePath, MAX_PATH);
 
 	int i;
 	for (i = lstrlen(filePath) - 1; i >= 0; i--)
