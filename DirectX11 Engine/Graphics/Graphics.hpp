@@ -17,5 +17,5 @@ private:
 	com_ptr<ID3D11RenderTargetView> renderTargetView;
 
 	VertexShader vertexShader;
+	PixelShader pixelShader;
 };
-

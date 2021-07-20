@@ -17,9 +17,9 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 5  Domain Shader		(DS) Stage
 6  Geometry Shader		(GS) Stage
 7  Stream Output		(SO) Stage
-8  Rasterizer			(RS) Stage
+*8  Rasterizer			(RS) Stage
 9  Pixel Shader			(PS) Stage
-10 Output Merger		(OM) Stage
+*10 Output Merger		(OM) Stage
 */
 void Graphics::RenderFrame()
 {
@@ -95,6 +95,16 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 
 	this->deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), NULL);
 
+	// Viewport
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = static_cast<FLOAT>(width);
+	viewport.Height = static_cast<FLOAT>(height);
+
+	deviceContext->RSSetViewports(1, &viewport);
+
 	return true;
 }
 
@@ -107,9 +117,10 @@ bool Graphics::InitializeShader()
 	UINT numElements = ARRAYSIZE(loyout);
 
 	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso", loyout, numElements))
-	{
 		return false;
-	}
+
+	if (!pixelShader.Initalize(device, Paths::ShaderFolder + L"PixelShader.cso"))
+		return false;
 	
 	return true;
 }
