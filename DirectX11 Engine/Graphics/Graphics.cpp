@@ -1,4 +1,5 @@
 #include "Graphics.hpp"
+#include "../Paths.hpp"
 
 bool Graphics::Initialize(HWND hWnd, int width, int height)
 {
@@ -99,27 +100,7 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 
 bool Graphics::InitializeShader()
 {
-	std::wstring shaderfolder = L"";
-	#pragma region ShaderFolder
-	if (IsDebuggerPresent() == TRUE)
-	{
-	#ifdef _DEBUG // Debug
-	#ifdef _WIN64 //x64
-			shaderfolder = L"..\\x64\\Debug\\"; // x64 Debug
-	#else		  // x86
-			shaderfolder = L"..\\Debug\\"; // x86 Debug
-	#endif
-	#else // Release
-	#ifdef _WIN64 // x64
-			shaderfolder = L"..\\x64\\Release\\"; // x64 Release
-	#else		  // x86
-			shaderfolder = L"..\\Release\\"; // x86 Release
-	#endif
-	#endif
-	}
-	#pragma endregion
-
-	if (vertexShader.Initalize(device, shaderfolder + L"VertexShader.cso"))
+	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso"))
 	{
 		return false;
 	}

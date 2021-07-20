@@ -10,12 +10,13 @@ int APIENTRY wWinMain(
 {
 	Engine engine;
 
-	engine.Initialize(hInstance,"DirectX11 Engine","directx11_engine",600,400);
-
-	while (engine.ProcessMessages() == true)
+	if (engine.Initialize(hInstance, "DirectX11 Engine", "directx11_engine", 600, 400))
 	{
-		engine.Update();
-		engine.RenderFrame();
+		while (engine.ProcessMessages() == true)
+		{
+			engine.Update();
+			engine.RenderFrame();
+		}
 	}
 	return 0;
 }

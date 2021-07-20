@@ -156,6 +156,7 @@
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
+    <ClCompile Include="Paths.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Graphics\Shaders.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Keyboard\KeyboardEvent.hpp" />
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
+    <ClInclude Include="Paths.hpp" />
     <ClInclude Include="RenderWindow.hpp" />
     <ClInclude Include="Graphics\Shaders.hpp" />
     <ClInclude Include="StringConverter.hpp" />
