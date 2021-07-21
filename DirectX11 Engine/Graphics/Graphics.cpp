@@ -27,18 +27,30 @@ void Graphics::RenderFrame()
 {
 	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
+	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	deviceContext->IASetInputLayout(vertexShader.GatInputLoyout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	deviceContext->RSSetState(rasterizerState.Get());
+	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
+	//Green
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer2.GetAddressOf(), &stride, &offset);
 	deviceContext->Draw(3, 0);
+	 //Red
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	deviceContext->Draw(3, 0);
+
+	// Draw text
+	spriteBatch->Begin();
+	spriteFont->DrawString(spriteBatch.get(), L"Hello", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	spriteBatch->End();
+
 	swapchain->Present(1, NULL);
 }
 
@@ -96,18 +108,60 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	hr = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
 	if (FAILED(hr))
 	{
-		ErrorLogger::Log(hr, "GetBuffer. Failed to create backBuffer.");
+		ErrorLogger::Log(hr, "GetBuffer. Failed to create back buffer.");
 		return false;
 	}
 
 	hr = device->CreateRenderTargetView(backBuffer.Get(), NULL, renderTargetView.GetAddressOf());
 	if (FAILED(hr))
 	{
-		ErrorLogger::Log(hr, "Failed to create RenderTargetView.");
+		ErrorLogger::Log(hr, "Failed to create render target view.");
 		return false;
 	}
 
-	this->deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), NULL);
+	// Depth/Stencil Buffer
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	depthStencilDesc.Width = width;
+	depthStencilDesc.Height = height;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	hr = device->CreateTexture2D(&depthStencilDesc, NULL, depthStencilBuffer.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create depth stencil buffer.");
+		return false;
+	}
+
+	hr = device->CreateDepthStencilView(depthStencilBuffer.Get(), NULL, depthStencilView.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create depth stencil view.");
+		return false;
+	}
+
+	this->deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+
+	// Depth Stencil State
+	D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
+	ZeroMemory(&depthStencilStateDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthStencilStateDesc.DepthEnable = true;
+	depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+	hr = device->CreateDepthStencilState(&depthStencilStateDesc, depthStencilState.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create depth stencil state.");
+		return false;
+	}
 
 	// Viewport
 	D3D11_VIEWPORT viewport;
@@ -116,8 +170,25 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	viewport.TopLeftY = 0;
 	viewport.Width = static_cast<FLOAT>(width);
 	viewport.Height = static_cast<FLOAT>(height);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
 
 	deviceContext->RSSetViewports(1, &viewport);
+
+	// Rasterizer state
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID; // Fill the triangles formed by the vertices. Adjacent vertices are not drawn.
+	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;	 // Do not draw triangles that are back-facing.
+	hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create rasterizer state.");
+		return false;
+	}
+
+	spriteBatch = std::make_unique<DirectX::SpriteBatch>(deviceContext.Get());
+	spriteFont = std::make_unique<DirectX::SpriteFont>(device.Get(), L"Data\\Fonts\\comic_sans_ms_16.spritefont");
 
 	return true;
 }
@@ -126,7 +197,7 @@ bool Graphics::InitializeShader()
 {
 	D3D11_INPUT_ELEMENT_DESC loyout[]
 	{
-		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(loyout);
@@ -142,11 +213,12 @@ bool Graphics::InitializeShader()
 
 bool Graphics::InitializeScene()
 {
+	// Red
 	Vertex v[]
 	{
-		{-0.5f, -0.5f, 1.0f, 0.0f, 0.0f},
-		{ 0.0f,  0.5f, 0.0f, 1.0f, 0.0f},
-		{ 0.5f, -0.5f, 0.0f, 0.0f, 1.0f},
+		{-0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
+		{ 0.0f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
+		{ 0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
 	};
 	/*Vertex v[]
 	{
@@ -178,6 +250,49 @@ bool Graphics::InitializeScene()
 		ErrorLogger::Log(hr, "Failed to create vertex buffer.");
 		return false;
 	}
+
+
+	// 2
+
+
+	Vertex v2[]
+	{
+		{-0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
+		{ 0.0f,   0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
+		{ 0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
+	};
+	/*Vertex v[]
+	{
+		{-0.5f, 0.5f},
+		{0.5f, 0.5f},
+		{0.5f, -0.5f},
+		{-0.5f, -0.5f},
+	};*/
+
+	D3D11_BUFFER_DESC vertexBufferDesc2;
+	ZeroMemory(&vertexBufferDesc2, sizeof(vertexBufferDesc2));
+
+
+	vertexBufferDesc2.ByteWidth = sizeof(Vertex) * ARRAYSIZE(v2);
+	vertexBufferDesc2.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc2.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc2.CPUAccessFlags = NULL;
+	vertexBufferDesc2.MiscFlags = NULL;
+	vertexBufferDesc2.StructureByteStride = sizeof(Vertex);
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData2;
+	ZeroMemory(&vertexBufferData2, sizeof(vertexBufferData2));
+
+	vertexBufferData2.pSysMem = v2;
+
+	hr = device->CreateBuffer(&vertexBufferDesc2, &vertexBufferData2, vertexBuffer2.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create vertex buffer2.");
+		return false;
+	}
+
+
 
 	return true;
 }
