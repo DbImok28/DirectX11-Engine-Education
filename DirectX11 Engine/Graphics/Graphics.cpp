@@ -33,6 +33,7 @@ void Graphics::RenderFrame()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->RSSetState(rasterizerState.Get());
 	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
+	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
@@ -40,11 +41,9 @@ void Graphics::RenderFrame()
 	UINT offset = 0;
 
 	//Green
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer2.GetAddressOf(), &stride, &offset);
-	deviceContext->Draw(3, 0);
-	 //Red
+	deviceContext->PSSetShaderResources(0, 1, myTexture.GetAddressOf());
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	deviceContext->Draw(3, 0);
+	deviceContext->Draw(6, 0);
 
 	// Draw text
 	spriteBatch->Begin();
@@ -190,6 +189,23 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	spriteBatch = std::make_unique<DirectX::SpriteBatch>(deviceContext.Get());
 	spriteFont = std::make_unique<DirectX::SpriteFont>(device.Get(), L"Data\\Fonts\\comic_sans_ms_16.spritefont");
 
+	// Sampler state
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	hr = device->CreateSamplerState(&sampDesc, samplerState.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create sampler state.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -198,7 +214,7 @@ bool Graphics::InitializeShader()
 	D3D11_INPUT_ELEMENT_DESC loyout[]
 	{
 		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(loyout);
 
@@ -216,9 +232,13 @@ bool Graphics::InitializeScene()
 	// Red
 	Vertex v[]
 	{
-		{-0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
-		{ 0.0f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
-		{ 0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f},
+		{-0.5f, -0.5f, 1.0f, 0.0f, 1.0f},
+		{-0.5f,  0.5f, 1.0f, 0.0f, 0.0f},
+		{ 0.5f,  0.5f, 1.0f, 1.0f, 0.0f},
+
+		{-0.5f, -0.5f, 1.0f, 0.0f, 1.0f},
+		{ 0.5f,  0.5f, 1.0f, 1.0f, 0.0f},
+		{ 0.5f, -0.5f, 1.0f, 1.0f, 1.0f},
 	};
 	/*Vertex v[]
 	{
@@ -251,48 +271,11 @@ bool Graphics::InitializeScene()
 		return false;
 	}
 
-
-	// 2
-
-
-	Vertex v2[]
-	{
-		{-0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
-		{ 0.0f,   0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
-		{ 0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f},
-	};
-	/*Vertex v[]
-	{
-		{-0.5f, 0.5f},
-		{0.5f, 0.5f},
-		{0.5f, -0.5f},
-		{-0.5f, -0.5f},
-	};*/
-
-	D3D11_BUFFER_DESC vertexBufferDesc2;
-	ZeroMemory(&vertexBufferDesc2, sizeof(vertexBufferDesc2));
-
-
-	vertexBufferDesc2.ByteWidth = sizeof(Vertex) * ARRAYSIZE(v2);
-	vertexBufferDesc2.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc2.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc2.CPUAccessFlags = NULL;
-	vertexBufferDesc2.MiscFlags = NULL;
-	vertexBufferDesc2.StructureByteStride = sizeof(Vertex);
-
-	D3D11_SUBRESOURCE_DATA vertexBufferData2;
-	ZeroMemory(&vertexBufferData2, sizeof(vertexBufferData2));
-
-	vertexBufferData2.pSysMem = v2;
-
-	hr = device->CreateBuffer(&vertexBufferDesc2, &vertexBufferData2, vertexBuffer2.GetAddressOf());
+	hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\myImg.jpg", nullptr, myTexture.GetAddressOf());
 	if (FAILED(hr))
 	{
-		ErrorLogger::Log(hr, "Failed to create vertex buffer2.");
+		ErrorLogger::Log(hr, "Failed to load texture from file.");
 		return false;
 	}
-
-
-
 	return true;
 }

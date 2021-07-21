@@ -8,6 +8,13 @@ int APIENTRY wWinMain(
 	_In_		LPWSTR		lpCmdLine,
 	_In_		int			nCmdShow)
 {
+	HRESULT hr = CoInitialize(NULL);
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to call CoInitialize.");
+		return false;
+	}
+
 	Engine engine;
 
 	if (engine.Initialize(hInstance, "DirectX11 Engine", "directx11_engine", 600, 400))

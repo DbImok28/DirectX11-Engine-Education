@@ -1,6 +1,7 @@
 #pragma once
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
+#include <WICTextureLoader.h>
 #include "AdapterReader.hpp"
 #include "Shaders.hpp"
 #include "Vertex.hpp"
@@ -24,7 +25,6 @@ private:
 	PixelShader pixelShader;
 
 	com_ptr<ID3D11Buffer> vertexBuffer;
-	com_ptr<ID3D11Buffer> vertexBuffer2;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;
@@ -34,4 +34,7 @@ private:
 
 	std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
 	std::unique_ptr<DirectX::SpriteFont> spriteFont;
+
+	com_ptr<ID3D11SamplerState> samplerState;
+	com_ptr<ID3D11ShaderResourceView> myTexture;
 };
