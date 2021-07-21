@@ -1,6 +1,7 @@
 #pragma once
 #include "AdapterReader.hpp"
 #include "Shaders.hpp"
+#include "Vertex.hpp"
 
 class Graphics
 {
@@ -10,6 +11,7 @@ public:
 private:
 	bool InitializeDirectX(HWND hWnd, int width, int height);
 	bool InitializeShader();
+	bool InitializeScene();
 
 	com_ptr<ID3D11Device> device;
 	com_ptr<ID3D11DeviceContext> deviceContext;
@@ -18,4 +20,6 @@ private:
 
 	VertexShader vertexShader;
 	PixelShader pixelShader;
+
+	com_ptr<ID3D11Buffer>vertexBuffer;
 };

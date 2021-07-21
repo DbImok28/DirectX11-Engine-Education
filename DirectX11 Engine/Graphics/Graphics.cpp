@@ -7,6 +7,8 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 		return false;
 	if (!InitializeShader())
 		return false;
+	if (!InitializeScene())
+		return false;
 	return true;
 }
 /*
@@ -25,6 +27,18 @@ void Graphics::RenderFrame()
 {
 	float bgcolor[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
+
+	deviceContext->IASetInputLayout(vertexShader.GatInputLoyout());
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
+	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+
+	deviceContext->Draw(3, 0);
 	swapchain->Present(1, NULL);
 }
 
@@ -122,5 +136,47 @@ bool Graphics::InitializeShader()
 	if (!pixelShader.Initalize(device, Paths::ShaderFolder + L"PixelShader.cso"))
 		return false;
 	
+	return true;
+}
+
+bool Graphics::InitializeScene()
+{
+	Vertex v[]
+	{
+		{-0.5f, -0.5f},
+		{0.0f, 0.5f},
+		{0.5f, -0.5f},
+	};
+	/*Vertex v[]
+	{
+		{-0.5f, 0.5f},
+		{0.5f, 0.5f},
+		{0.5f, -0.5f},
+		{-0.5f, -0.5f},
+	};*/
+
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+
+	
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * ARRAYSIZE(v);
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = NULL;
+	vertexBufferDesc.MiscFlags = NULL;
+	vertexBufferDesc.StructureByteStride = sizeof(Vertex);
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
+
+	vertexBufferData.pSysMem = v;
+
+	HRESULT hr = device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, vertexBuffer.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create vertex buffer.");
+		return false;
+	}
+
 	return true;
 }
