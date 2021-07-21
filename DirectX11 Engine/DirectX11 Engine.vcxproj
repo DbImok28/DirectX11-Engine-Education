@@ -157,11 +157,11 @@
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
-    <ClCompile Include="RenderWindow.cpp" />
+    <ClCompile Include="Window\RenderWindow.cpp" />
     <ClCompile Include="Graphics\Shaders.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StringConverter.cpp" />
-    <ClCompile Include="WindowContainer.cpp" />
+    <ClCompile Include="Window\WindowContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\AdapterReader.hpp" />
@@ -174,11 +174,11 @@
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />
-    <ClInclude Include="RenderWindow.hpp" />
+    <ClInclude Include="Window\RenderWindow.hpp" />
     <ClInclude Include="Graphics\Shaders.hpp" />
     <ClInclude Include="StringConverter.hpp" />
     <ClInclude Include="Graphics\Vertex.hpp" />
-    <ClInclude Include="WindowContainer.hpp" />
+    <ClInclude Include="Window\WindowContainer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Graphics\Shader\VertexShader.hlsl">
@@ -191,7 +191,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="Graphics\Shader\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

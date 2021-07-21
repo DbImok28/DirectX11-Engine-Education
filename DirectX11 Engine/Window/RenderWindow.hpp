@@ -1,5 +1,5 @@
 #pragma once
-#include "ErrorLogger.hpp"
+#include "../ErrorLogger.hpp"
 
 class WindowContainer;
 

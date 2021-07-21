@@ -1,8 +1,8 @@
 #pragma once
-#include "Keyboard/KeyboardClass.hpp"
 #include "RenderWindow.hpp"
-#include "Mouse/MouseClass.hpp"
-#include "Graphics/Graphics.hpp"
+#include "../Keyboard/KeyboardClass.hpp"
+#include "../Mouse/MouseClass.hpp"
+#include "../Graphics/Graphics.hpp"
 
 class WindowContainer
 {

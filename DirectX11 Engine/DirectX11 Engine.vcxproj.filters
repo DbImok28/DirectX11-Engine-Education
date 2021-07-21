@@ -69,10 +69,10 @@
     <ClCompile Include="Graphics\AdapterReader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="WindowContainer.cpp">
+    <ClCompile Include="Window\WindowContainer.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWindow.cpp">
+    <ClCompile Include="Window\RenderWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Shaders.cpp">
@@ -116,10 +116,10 @@
     <ClInclude Include="Graphics\Vertex.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="RenderWindow.hpp">
+    <ClInclude Include="Window\RenderWindow.hpp">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="WindowContainer.hpp">
+    <ClInclude Include="Window\WindowContainer.hpp">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Shaders.hpp">
@@ -133,7 +133,7 @@
     <FxCompile Include="Graphics\Shader\VertexShader.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="Graphics\Shader\PixelShader.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>
