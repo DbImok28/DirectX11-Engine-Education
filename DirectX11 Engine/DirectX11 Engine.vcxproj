@@ -152,6 +152,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="ErrorLogger.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Graphics\IndexBuffer.cpp" />
     <ClCompile Include="Keyboard\KeyboardClass.cpp" />
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
@@ -169,11 +170,13 @@
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="ErrorLogger.hpp" />
     <ClInclude Include="Graphics\Graphics.hpp" />
+    <ClInclude Include="Graphics\IndexBuffer.hpp" />
     <ClInclude Include="Keyboard\KeyboardClass.hpp" />
     <ClInclude Include="Keyboard\KeyboardEvent.hpp" />
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />
+    <ClInclude Include="Graphics\VertexBuffer.hpp" />
     <ClInclude Include="Window\RenderWindow.hpp" />
     <ClInclude Include="Graphics\Shaders.hpp" />
     <ClInclude Include="StringConverter.hpp" />

@@ -5,6 +5,8 @@
 #include "AdapterReader.hpp"
 #include "Shaders.hpp"
 #include "Vertex.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 class Graphics
 {
@@ -24,8 +26,8 @@ private:
 	VertexShader vertexShader;
 	PixelShader pixelShader;
 
-	com_ptr<ID3D11Buffer> vertexBuffer;
-	com_ptr<ID3D11Buffer> indicesBuffer;
+	VertexBuffer<Vertex> vertexBuffer;
+	IndexBuffer indexBuffer;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;
