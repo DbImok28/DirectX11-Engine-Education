@@ -25,7 +25,7 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 */
 void Graphics::RenderFrame()
 {
-	float bgcolor[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 
 	deviceContext->IASetInputLayout(vertexShader.GatInputLoyout());
@@ -126,7 +126,8 @@ bool Graphics::InitializeShader()
 {
 	D3D11_INPUT_ELEMENT_DESC loyout[]
 	{
-		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(loyout);
 
@@ -143,9 +144,9 @@ bool Graphics::InitializeScene()
 {
 	Vertex v[]
 	{
-		{-0.5f, -0.5f},
-		{0.0f, 0.5f},
-		{0.5f, -0.5f},
+		{-0.5f, -0.5f, 1.0f, 0.0f, 0.0f},
+		{ 0.0f,  0.5f, 0.0f, 1.0f, 0.0f},
+		{ 0.5f, -0.5f, 0.0f, 0.0f, 1.0f},
 	};
 	/*Vertex v[]
 	{
