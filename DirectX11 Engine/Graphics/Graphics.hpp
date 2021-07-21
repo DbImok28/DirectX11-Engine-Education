@@ -7,6 +7,7 @@
 #include "Vertex.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
+#include "ConstantBufferTypes.hpp"
 
 class Graphics
 {
@@ -28,6 +29,7 @@ private:
 
 	VertexBuffer<Vertex> vertexBuffer;
 	IndexBuffer indexBuffer;
+	com_ptr<ID3D11Buffer> constantBuffer;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;
