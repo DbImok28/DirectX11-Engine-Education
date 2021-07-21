@@ -25,6 +25,7 @@ private:
 	PixelShader pixelShader;
 
 	com_ptr<ID3D11Buffer> vertexBuffer;
+	com_ptr<ID3D11Buffer> indicesBuffer;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;

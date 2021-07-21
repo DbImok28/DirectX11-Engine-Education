@@ -12,7 +12,7 @@ int APIENTRY wWinMain(
 	if (FAILED(hr))
 	{
 		ErrorLogger::Log(hr, "Failed to call CoInitialize.");
-		return false;
+		return -1;
 	}
 
 	Engine engine;

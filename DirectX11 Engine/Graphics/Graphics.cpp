@@ -43,7 +43,8 @@ void Graphics::RenderFrame()
 	//Green
 	deviceContext->PSSetShaderResources(0, 1, myTexture.GetAddressOf());
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	deviceContext->Draw(6, 0);
+	deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->DrawIndexed(6, 0, 0);
 
 	// Draw text
 	spriteBatch->Begin();
@@ -235,35 +236,26 @@ bool Graphics::InitializeScene()
 		{-0.5f, -0.5f, 1.0f, 0.0f, 1.0f},
 		{-0.5f,  0.5f, 1.0f, 0.0f, 0.0f},
 		{ 0.5f,  0.5f, 1.0f, 1.0f, 0.0f},
-
-		{-0.5f, -0.5f, 1.0f, 0.0f, 1.0f},
-		{ 0.5f,  0.5f, 1.0f, 1.0f, 0.0f},
 		{ 0.5f, -0.5f, 1.0f, 1.0f, 1.0f},
 	};
-	/*Vertex v[]
+	DWORD indices[] =
 	{
-		{-0.5f, 0.5f},
-		{0.5f, 0.5f},
-		{0.5f, -0.5f},
-		{-0.5f, -0.5f},
-	};*/
+		0, 1, 2,
+		0, 2, 3
+	};
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-
-	
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * ARRAYSIZE(v);
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = NULL;
-	vertexBufferDesc.MiscFlags = NULL;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = sizeof(Vertex);
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-
 	vertexBufferData.pSysMem = v;
-
 	HRESULT hr = device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, vertexBuffer.GetAddressOf());
 	if (FAILED(hr))
 	{
@@ -271,6 +263,27 @@ bool Graphics::InitializeScene()
 		return false;
 	}
 
+	// indices
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * ARRAYSIZE(indices);
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = sizeof(DWORD);
+
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
+	indexBufferData.pSysMem = indices;
+	hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, indicesBuffer.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create indices buffer.");
+		return false;
+	}
+
+	// load texture
 	hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\myImg.jpg", nullptr, myTexture.GetAddressOf());
 	if (FAILED(hr))
 	{
