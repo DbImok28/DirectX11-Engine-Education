@@ -159,6 +159,7 @@
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window\RenderWindow.cpp" />
     <ClCompile Include="Graphics\Shaders.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />
     <ClInclude Include="Graphics\VertexBuffer.hpp" />
+    <ClInclude Include="Timer.hpp" />
     <ClInclude Include="Window\RenderWindow.hpp" />
     <ClInclude Include="Graphics\Shaders.hpp" />
     <ClInclude Include="StringConverter.hpp" />

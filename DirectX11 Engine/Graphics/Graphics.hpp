@@ -4,6 +4,7 @@
 #include <WICTextureLoader.h>
 #include "../Base.hpp"
 #include "../Paths.hpp"
+#include "../Timer.hpp"
 #include "AdapterReader.hpp"
 #include "Camera.hpp"
 #include "Shaders.hpp"
@@ -18,6 +19,8 @@ class Graphics
 public:
 	bool Initialize(HWND hWnd, int width, int height);
 	void RenderFrame();
+
+	Camera camera;
 private:
 	bool InitializeDirectX(HWND hWnd);
 	bool InitializeShader();
@@ -50,5 +53,5 @@ private:
 	int windowWidth = 0;
 	int windowHeight = 0;
 
-	Camera camera;
+	Timer fpsTimer;
 };

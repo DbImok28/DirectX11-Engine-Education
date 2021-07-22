@@ -2,6 +2,7 @@
 
 bool Graphics::Initialize(HWND hWnd, int width, int height)
 {
+	fpsTimer.Start();
 	windowWidth = width;
 	windowHeight = height;
 	if (!InitializeDirectX(hWnd))
@@ -26,6 +27,7 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 */
 void Graphics::RenderFrame()
 {
+	float deltaTime = fpsTimer.GetMilisecondsElapsed() / 1000;
 	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -40,14 +42,12 @@ void Graphics::RenderFrame()
 
 	
 	// world;
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	XMMATRIX world = XMMatrixIdentity();
 
 
 	// Constant buffer
-	camera.AdjustPosition(0.01f, 0.0f, 0.0f);
-	camera.SetLookAtPos(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
+	constantBuffer.data.mat = XMMatrixTranspose(constantBuffer.data.mat);
 	if (!constantBuffer.ApplyChanges())
 		return;
 	
@@ -59,9 +59,19 @@ void Graphics::RenderFrame()
 	deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
 
+	static int fpsCount = 0;
+	static std::string fpsStr = "FPS: 0";
+	fpsCount++;
+	if (deltaTime > 1)
+	{
+		fpsStr = "FPS: " + std::to_string(fpsCount);
+		fpsCount = 0;
+		fpsTimer.Restart();
+	}
+
 	// Draw text
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), L"Hello", DirectX::XMFLOAT2(0.0f, 0.0f),  DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	spriteFont->DrawString(spriteBatch.get(), StringConverter::StringToWide(fpsStr).c_str(), DirectX::XMFLOAT2(0.0f, 0.0f),  DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	spriteBatch->End();
 
 	swapchain->Present(1, NULL);
