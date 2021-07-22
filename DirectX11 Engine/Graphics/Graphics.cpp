@@ -2,7 +2,9 @@
 
 bool Graphics::Initialize(HWND hWnd, int width, int height)
 {
-	if (!InitializeDirectX(hWnd, width, height))
+	windowWidth = width;
+	windowHeight = height;
+	if (!InitializeDirectX(hWnd))
 		return false;
 	if (!InitializeShader())
 		return false;
@@ -36,10 +38,16 @@ void Graphics::RenderFrame()
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
-	// Constant buffer
 	
-	constantBuffer.data.xOffset = 0.0f;
-	constantBuffer.data.yOffset = 0.5f ;
+	// world;
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+
+
+	// Constant buffer
+	camera.AdjustPosition(0.01f, 0.0f, 0.0f);
+	camera.SetLookAtPos(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
 	if (!constantBuffer.ApplyChanges())
 		return;
 	
@@ -53,13 +61,13 @@ void Graphics::RenderFrame()
 
 	// Draw text
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), L"Hello", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	spriteFont->DrawString(spriteBatch.get(), L"Hello", DirectX::XMFLOAT2(0.0f, 0.0f),  DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	spriteBatch->End();
 
 	swapchain->Present(1, NULL);
 }
 
-bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
+bool Graphics::InitializeDirectX(HWND hWnd)
 {
 	std::vector<AdapterData> adapters = AdapterReader::GetAdapters();
 	if (adapters.size() < 1)
@@ -71,8 +79,8 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	DXGI_SWAP_CHAIN_DESC scd;
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	scd.BufferDesc.Width = width;
-	scd.BufferDesc.Height = height;
+	scd.BufferDesc.Width = windowWidth;
+	scd.BufferDesc.Height = windowHeight;
 	scd.BufferDesc.RefreshRate.Numerator = 60;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -126,8 +134,8 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 
 	// Depth/Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width = width;
-	depthStencilDesc.Height = height;
+	depthStencilDesc.Width = windowWidth;
+	depthStencilDesc.Height = windowHeight;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -173,8 +181,8 @@ bool Graphics::InitializeDirectX(HWND hWnd, int width, int height)
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = static_cast<FLOAT>(width);
-	viewport.Height = static_cast<FLOAT>(height);
+	viewport.Width = static_cast<FLOAT>(windowWidth);
+	viewport.Height = static_cast<FLOAT>(windowHeight);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
@@ -238,10 +246,10 @@ bool Graphics::InitializeScene()
 	// Vertices
 	Vertex v[]
 	{
-		{-0.5f, -0.5f, 1.0f, 0.0f, 1.0f},
-		{-0.5f,  0.5f, 1.0f, 0.0f, 0.0f},
-		{ 0.5f,  0.5f, 1.0f, 1.0f, 0.0f},
-		{ 0.5f, -0.5f, 1.0f, 1.0f, 1.0f},
+		{-0.5f, -0.5f, 0.0f, 0.0f, 1.0f},
+		{-0.5f,  0.5f, 0.0f, 0.0f, 0.0f},
+		{ 0.5f,  0.5f, 0.0f, 1.0f, 0.0f},
+		{ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f},
 	};
 
 	HRESULT hr = vertexBuffer.Initialize(device.Get(), v, ARRAYSIZE(v));
@@ -278,5 +286,11 @@ bool Graphics::InitializeScene()
 		ErrorLogger::Log(hr, "Failed to create constant buffer.");
 		return false;
 	}
+
+	float nearZ = 0.1f;
+	float farZ = 10000.0f;
+	camera.SetPosition(0.0f, 0.0f, -2.0f);
+	camera.SetProjectionValues(90.0f, static_cast<float>(windowWidth) / static_cast<float>(windowHeight), nearZ, farZ);
+
 	return true;
 }

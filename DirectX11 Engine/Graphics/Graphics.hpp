@@ -5,6 +5,7 @@
 #include "../Base.hpp"
 #include "../Paths.hpp"
 #include "AdapterReader.hpp"
+#include "Camera.hpp"
 #include "Shaders.hpp"
 #include "Vertex.hpp"
 #include "VertexBuffer.hpp"
@@ -18,7 +19,7 @@ public:
 	bool Initialize(HWND hWnd, int width, int height);
 	void RenderFrame();
 private:
-	bool InitializeDirectX(HWND hWnd, int width, int height);
+	bool InitializeDirectX(HWND hWnd);
 	bool InitializeShader();
 	bool InitializeScene();
 
@@ -45,4 +46,9 @@ private:
 
 	com_ptr<ID3D11SamplerState> samplerState;
 	com_ptr<ID3D11ShaderResourceView> myTexture;
+
+	int windowWidth = 0;
+	int windowHeight = 0;
+
+	Camera camera;
 };
