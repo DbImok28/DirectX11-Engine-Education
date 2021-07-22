@@ -12,7 +12,8 @@ private:
 	com_ptr<ID3D11Buffer> buffer;
 	ID3D11DeviceContext* deviceContext = nullptr;
 public:
-	ConstantBuffer(){}
+	ConstantBuffer():data(){}
+	ConstantBuffer(T data) : data(data) {}
 	T data;
 
 	ID3D11Buffer* Get() const noexcept

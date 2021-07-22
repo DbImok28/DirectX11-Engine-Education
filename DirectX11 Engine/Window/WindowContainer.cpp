@@ -19,9 +19,12 @@ WindowContainer::WindowContainer()
 		rawInputInitialized = true;
 	}
 }
-
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT WindowContainer::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
 	switch (uMsg)
 	{
 	// keyboard
@@ -147,7 +150,7 @@ LRESULT WindowContainer::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 				}
 			}
 		}
-		return DefWindowProc(hWnd, uMsg, wParam, lParam );
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 	default:
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
