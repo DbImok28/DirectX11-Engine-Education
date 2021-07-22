@@ -1,5 +1,4 @@
 #include "Graphics.hpp"
-#include "../Paths.hpp"
 
 bool Graphics::Initialize(HWND hWnd, int width, int height)
 {
@@ -38,13 +37,12 @@ void Graphics::RenderFrame()
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
 	// Constant buffer
-	CB_VS_vertexshader data;
-	data.xOffset = 0.0f;
-	data.yOffset = 0.5f;
-	D3D11_MAPPED_SUBRESOURCE mappedResorce;
-	HRESULT hr = deviceContext->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResorce);
-	CopyMemory(mappedResorce.pData, &data, sizeof(CB_VS_vertexshader));
-	deviceContext->Unmap(constantBuffer.Get(), 0);
+	
+	constantBuffer.data.xOffset = 0.0f;
+	constantBuffer.data.yOffset = 0.5f ;
+	if (!constantBuffer.ApplyChanges())
+		return;
+	
 	deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
 
 	UINT offset = 0;
@@ -274,18 +272,7 @@ bool Graphics::InitializeScene()
 		return false;
 	}
 
-
-	D3D11_BUFFER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	desc.MiscFlags = 0;
-	desc.StructureByteStride = 0;
-	desc.ByteWidth = static_cast<UINT>(sizeof(CB_VS_vertexshader) + (16 - (sizeof(CB_VS_vertexshader) % 16)));
-
-	hr = device->CreateBuffer(&desc, 0, constantBuffer.GetAddressOf());
+	hr = constantBuffer.Initialize(device.Get(), deviceContext.Get());
 	if (FAILED(hr))
 	{
 		ErrorLogger::Log(hr, "Failed to create constant buffer.");
