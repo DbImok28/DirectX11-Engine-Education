@@ -41,31 +41,93 @@ void Graphics::RenderFrame()
 
 	deviceContext->IASetInputLayout(vertexShader.GatInputLoyout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->RSSetState(rasterizerState.Get());
+	//deviceContext->RSSetState(rasterizerState.Get());
 	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
+	deviceContext->OMSetBlendState(blendState.Get(), NULL, 0xFFFFFFFF);
+
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
-
 	
+
+
+
+
+
 	// world;
 	//XMMATRIX world = XMMatrixIdentity();
-	static float translationOffset[3]{ 0,0,0 };
-	XMMATRIX world = XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+	static float alpha = 0.5f;
 
-	// Constant buffer
-	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-	constantBuffer.data.mat = XMMatrixTranspose(constantBuffer.data.mat);
-	if (!constantBuffer.ApplyChanges())
-		return;
-	
-	deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
 
-	UINT offset = 0;
-	deviceContext->PSSetShaderResources(0, 1, myTexture.GetAddressOf());
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-	deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+	//{ // MyTexture
+	//	static float translationOffset[3]{ 0,0,4.0f };
+	//	XMMATRIX world = XMMatrixScaling(10.0f, 10.0f, 10.0f) * XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+
+	//	// Constant buffer
+	//	cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+	//	cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
+	//	if (!cb_vs_VertexShader.ApplyChanges()) return;
+	//	deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
+
+	//	cb_ps_PixelShader.data.alpha = 1.0f;
+	//	if (!cb_ps_PixelShader.ApplyChanges()) return;
+	//	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
+
+	//	UINT offset = 0;
+	//	deviceContext->PSSetShaderResources(0, 1, myTexture.GetAddressOf());
+	//	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+	//	deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//	deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+	//}
+	{ // Concrete
+		static float translationOffset[3]{ 0,0,-2 };
+		XMMATRIX world = XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+
+		// Constant buffer
+		cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+		cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
+		if (!cb_vs_VertexShader.ApplyChanges()) return;
+		deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
+
+		cb_ps_PixelShader.data.alpha = alpha;
+		if (!cb_ps_PixelShader.ApplyChanges()) return;
+		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
+
+		UINT offset = 0;
+		deviceContext->PSSetShaderResources(0, 1, concreteTexture.GetAddressOf());
+		deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+		deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+
+		//deviceContext->RSSetState(rasterizerState_CullFront.Get());
+		//deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+		deviceContext->RSSetState(rasterizerState.Get());
+		deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+	}
+	{ // Grass
+		static float translationOffset[3]{ 2,0,-2 };
+		XMMATRIX world = XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+
+		// Constant buffer
+		cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+		cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
+		if (!cb_vs_VertexShader.ApplyChanges()) return;
+		deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
+
+		cb_ps_PixelShader.data.alpha = 0.5f;
+		if (!cb_ps_PixelShader.ApplyChanges()) return;
+		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
+
+		UINT offset = 0;
+		deviceContext->PSSetShaderResources(0, 1, grassTexture.GetAddressOf());
+		deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+		deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+	}
+
+
+
+
+
 
 	// fps
 	static int fpsCount = 0;
@@ -84,23 +146,20 @@ void Graphics::RenderFrame()
 	spriteBatch->End();
 
 	// Start ImGui frame
-	static int counter = 0;
+	static bool VerticalSync = true;
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	ImGui::Begin("Test");
-	ImGui::Text("exam");
-	if (ImGui::Button("Click Me!"))
-		counter++;
-	ImGui::SameLine();
-	std::string clicCount = "Click: " + std::to_string(counter);
-	ImGui::Text(clicCount.c_str());
-	ImGui::DragFloat3("Offset", translationOffset, 0.1f, -5.0f, 5.0f);
+	ImGui::DragFloat("Alpha", &alpha, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+	ImGui::Begin("Settings");
+	ImGui::Checkbox("VSync", &VerticalSync);
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-	swapchain->Present(1, NULL);
+	swapchain->Present(VerticalSync, NULL);
 
 
 }
@@ -237,7 +296,45 @@ bool Graphics::InitializeDirectX(HWND hWnd)
 		ErrorLogger::Log(hr, "Failed to create rasterizer state.");
 		return false;
 	}
+	// Rasterizer state Cull front
+	//D3D11_RASTERIZER_DESC rasterizerCullDesc;
+	//ZeroMemory(&rasterizerCullDesc, sizeof(D3D11_RASTERIZER_DESC));
+	//rasterizerCullDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID; // Fill the triangles formed by the vertices. Adjacent vertices are not drawn.
+	//rasterizerCullDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;	 // Do not draw triangles that are back-facing.
+	//hr = device->CreateRasterizerState(&rasterizerCullDesc, rasterizerState_CullFront.GetAddressOf());
+	//if (FAILED(hr))
+	//{
+	//	ErrorLogger::Log(hr, "Failed to create rasterizer state.");
+	//	return false;
+	//}
 
+	// Blend state
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
+
+	D3D11_RENDER_TARGET_BLEND_DESC rtbDesc;
+	ZeroMemory(&rtbDesc, sizeof(rtbDesc));
+	rtbDesc.BlendEnable = TRUE;
+	// color
+	rtbDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	rtbDesc.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	rtbDesc.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	// alpha
+	rtbDesc.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+	rtbDesc.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+	rtbDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	rtbDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	blendDesc.RenderTarget[0] = rtbDesc;
+	hr = device->CreateBlendState(&blendDesc, blendState.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create blend state.");
+		return false;
+	}
+
+
+	// Text
 	spriteBatch = std::make_unique<DirectX::SpriteBatch>(deviceContext.Get());
 	spriteFont = std::make_unique<DirectX::SpriteFont>(device.Get(), L"Data\\Fonts\\comic_sans_ms_16.spritefont");
 
@@ -284,10 +381,15 @@ bool Graphics::InitializeScene()
 	// Vertices
 	Vertex v[]
 	{
-		{-0.5f, -0.5f, 0.0f, 0.0f, 1.0f},
-		{-0.5f,  0.5f, 0.0f, 0.0f, 0.0f},
-		{ 0.5f,  0.5f, 0.0f, 1.0f, 0.0f},
-		{ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f},
+		{-0.5f, -0.5f, -0.5f, 0.0f, 1.0f}, // front
+		{-0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
+		{ 0.5f,  0.5f, -0.5f, 1.0f, 0.0f},
+		{ 0.5f, -0.5f, -0.5f, 1.0f, 1.0f},
+
+		{-0.5f, -0.5f, 0.5f, 0.0f, 1.0f}, // back
+		{-0.5f,  0.5f, 0.5f, 0.0f, 0.0f},
+		{ 0.5f,  0.5f, 0.5f, 1.0f, 0.0f},
+		{ 0.5f, -0.5f, 0.5f, 1.0f, 1.0f},
 	};
 
 	HRESULT hr = vertexBuffer.Initialize(device.Get(), v, ARRAYSIZE(v));
@@ -300,8 +402,12 @@ bool Graphics::InitializeScene()
 	// Indices
 	DWORD indices[] =
 	{
-		0, 1, 2,
-		0, 2, 3
+		0, 1, 2, 0, 2, 3, // front
+		4, 7, 6, 4, 6, 5, // back
+		3, 2, 6, 3, 6, 7, // right
+		4, 5, 1, 4, 1, 0, // left
+		1, 5, 6, 1, 6, 2, // top
+		0, 3, 7, 0, 7, 4, // bottom
 	};
 	hr = indexBuffer.Initialize(device.Get(), indices, ARRAYSIZE(indices));
 	if (FAILED(hr))
@@ -317,11 +423,30 @@ bool Graphics::InitializeScene()
 		ErrorLogger::Log(hr, "Failed to load texture from file.");
 		return false;
 	}
-
-	hr = constantBuffer.Initialize(device.Get(), deviceContext.Get());
+	hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\concrete.jpg", nullptr, concreteTexture.GetAddressOf());
 	if (FAILED(hr))
 	{
-		ErrorLogger::Log(hr, "Failed to create constant buffer.");
+		ErrorLogger::Log(hr, "Failed to load texture from file.");
+		return false;
+	}
+	hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\grass.jpg", nullptr, grassTexture.GetAddressOf());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to load texture from file.");
+		return false;
+	}
+
+	// Constant buffer
+	hr = cb_vs_VertexShader.Initialize(device.Get(), deviceContext.Get());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create constant buffer(cb_vs_VertexShader).");
+		return false;
+	}
+	hr = cb_ps_PixelShader.Initialize(device.Get(), deviceContext.Get());
+	if (FAILED(hr))
+	{
+		ErrorLogger::Log(hr, "Failed to create constant buffer(cb_ps_PixelShader).");
 		return false;
 	}
 

@@ -17,7 +17,7 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-    float deltaTime = timer.GetMilisecondsElapsed() / 1000.0f;
+    float deltaTime = timer.GetMilisecondsElapsed() / 1000.0;
 
     timer.Restart();
     while(!keyboard.CharBufferIsEmpty())
@@ -28,17 +28,17 @@ void Engine::Update()
     {
         auto e = keyboard.ReadKey();
     }
-    float cameraRotSpeed = 0.5f;
+    float cameraRotSpeed = 0.005f;
     while (!mouse.EventBufferIsEmpty())
     {
         auto e = mouse.ReadEvent();
-        if (e.GetType() == MouseEvent::EventType::RawMove)
+        if (!keyboard.KeyIsPressed(VK_SHIFT) && e.GetType() == MouseEvent::EventType::RawMove)
         {
-            gfx.camera.AdjustRotation(e.GetPosY() * cameraRotSpeed * deltaTime, e.GetPosX() * cameraRotSpeed * deltaTime, 0.0f);
+            gfx.camera.AdjustRotation(e.GetPosY() * cameraRotSpeed, e.GetPosX() * cameraRotSpeed, 0.0f);
         }
     }
 
-    float cameraSpeed = 1.0f;
+    float cameraSpeed = 8.0f;
 
     if (keyboard.KeyIsPressed(VK_ESCAPE))
     {

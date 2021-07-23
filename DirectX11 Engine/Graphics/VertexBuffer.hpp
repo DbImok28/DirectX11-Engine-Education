@@ -38,7 +38,7 @@ public:
 			buffer.Reset();
 
 		bufferSize = numVertices;
-		if(stide.get() == nullptr)
+		if(stride.get() == nullptr)
 			stride = std::make_unique<UINT>(sizeof(T));
 
 		D3D11_BUFFER_DESC vertexBufferDesc;

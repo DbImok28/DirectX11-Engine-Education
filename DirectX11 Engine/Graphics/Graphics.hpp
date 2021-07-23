@@ -40,19 +40,24 @@ private:
 
 	VertexBuffer<Vertex> vertexBuffer;
 	IndexBuffer indexBuffer;
-	ConstantBuffer<CB_VS_VertexShader> constantBuffer;
+	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
+	ConstantBuffer<CB_PS_PixelShader> cb_ps_PixelShader;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;
 	com_ptr<ID3D11DepthStencilState> depthStencilState;
 
 	com_ptr<ID3D11RasterizerState> rasterizerState;
+	/*com_ptr<ID3D11RasterizerState> rasterizerState_CullFront;*/
+	com_ptr<ID3D11BlendState> blendState;
 
 	std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
 	std::unique_ptr<DirectX::SpriteFont> spriteFont;
 
 	com_ptr<ID3D11SamplerState> samplerState;
 	com_ptr<ID3D11ShaderResourceView> myTexture;
+	com_ptr<ID3D11ShaderResourceView> grassTexture;
+	com_ptr<ID3D11ShaderResourceView> concreteTexture;
 
 	int windowWidth = 0;
 	int windowHeight = 0;
