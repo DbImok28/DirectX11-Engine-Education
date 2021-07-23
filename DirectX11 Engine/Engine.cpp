@@ -17,7 +17,7 @@ bool Engine::ProcessMessages()
 
 void Engine::Update()
 {
-    float deltaTime = timer.GetMilisecondsElapsed() / 1000.0;
+    float deltaTime = static_cast<float>(timer.GetMilisecondsElapsed() / 1000.0);
 
     timer.Restart();
     while(!keyboard.CharBufferIsEmpty())

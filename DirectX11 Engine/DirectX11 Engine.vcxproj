@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\AdapterReader.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="Graphics\IndexBuffer.cpp" />
     <ClCompile Include="Keyboard\KeyboardClass.cpp" />
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
@@ -174,6 +176,7 @@
     <ClCompile Include="Window\WindowContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Exceptions.hpp" />
     <ClInclude Include="Graphics\Camera.hpp" />
     <ClInclude Include="Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="Graphics\ConstantBufferTypes.hpp" />
@@ -194,6 +197,7 @@
     <ClInclude Include="Graphics\IndexBuffer.hpp" />
     <ClInclude Include="Keyboard\KeyboardClass.hpp" />
     <ClInclude Include="Keyboard\KeyboardEvent.hpp" />
+    <ClInclude Include="Model.hpp" />
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />

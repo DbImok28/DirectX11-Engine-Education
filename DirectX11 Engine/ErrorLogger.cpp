@@ -25,3 +25,8 @@ void ErrorLogger::Log(HRESULT hr, std::wstring message)
 	std::wstring err_msg = L"Error: " + message + L"\n" + error.ErrorMessage();
 	MessageBoxW(NULL, err_msg.c_str(), L"Error", MB_ICONERROR);
 }
+
+void ErrorLogger::Log(COMException& exception)
+{
+	Log(exception.what());
+}
