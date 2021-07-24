@@ -8,7 +8,7 @@
 #include "AdapterReader.hpp"
 #include "Camera.hpp"
 #include "Shaders.hpp"
-#include "Model.hpp"
+#include "GameObject.hpp"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -21,6 +21,7 @@ public:
 	void RenderFrame();
 
 	Camera camera;
+	GameObject gameObject;
 private:
 	bool InitializeDirectX(HWND hWnd);
 	bool InitializeShader();
@@ -37,7 +38,6 @@ private:
 	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
 	ConstantBuffer<CB_PS_PixelShader> cb_ps_PixelShader;
 
-	Model model;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;

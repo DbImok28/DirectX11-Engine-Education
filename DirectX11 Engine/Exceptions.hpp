@@ -1,7 +1,7 @@
 #pragma once
 #include <comdef.h>
 #include "Base.hpp"
-#include "StringConverter.hpp"
+#include "StringHelper.hpp"
 
 #define COM_ERROR_IF(hr, msg) if(FAILED(hr)) throw COMException(hr, msg, __FILE__, __FUNCTION__, __LINE__)
 
@@ -14,7 +14,7 @@ public:
 	{
 		_com_error error(hr);
 		std::wstringstream ss;
-		ss << L"Msg: " << StringConverter::StringToWide(msg) << L'\n'
+		ss << L"Msg: " << StringHelper::StringToWide(msg) << L'\n'
 			<< error.ErrorMessage()
 			<< L"\nFile: " << file
 			<< L"\nFunction: " << function
@@ -25,11 +25,11 @@ public:
 	{
 		_com_error error(hr);
 		std::wstringstream ss;
-		ss << L"Msg: " << StringConverter::StringToWide(msg) << L'\n'
+		ss << L"Msg: " << StringHelper::StringToWide(msg) << L'\n'
 			<< error.ErrorMessage()
-			<< L"\nFile: " << StringConverter::StringToWide(file)
-			<< L"\nFunction: " << StringConverter::StringToWide(function)
-			<< L"\nLine: " << StringConverter::StringToWide(line);
+			<< L"\nFile: " << StringHelper::StringToWide(file)
+			<< L"\nFunction: " << StringHelper::StringToWide(function)
+			<< L"\nLine: " << StringHelper::StringToWide(line);
 		whatMsg = ss.str();
 	}
 	COMException(HRESULT hr, const std::wstring& msg, const std::wstring& file, const std::wstring& function, const std::wstring& line)

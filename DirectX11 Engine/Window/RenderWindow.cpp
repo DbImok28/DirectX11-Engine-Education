@@ -3,17 +3,17 @@
 
 
 //RenderWindow::RenderWindow(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
-//: hInst(hInstance), window_title(window_title), window_title_wide(StringConverter::StringToWide(window_title)),
-//window_class(window_class), window_class_wide(StringConverter::StringToWide(window_class)), width(width), height(height)
+//: hInst(hInstance), window_title(window_title), window_title_wide(StringHelper::StringToWide(window_title)),
+//window_class(window_class), window_class_wide(StringHelper::StringToWide(window_class)), width(width), height(height)
 //{
 //}
 bool RenderWindow::Initialize(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
     hInst = hInstance;
     this->window_title = window_title;
-    this->window_title_wide = StringConverter::StringToWide(window_title);
+    this->window_title_wide = StringHelper::StringToWide(window_title);
     this->window_class = window_class;
-    this->window_class_wide = StringConverter::StringToWide(window_class);
+    this->window_class_wide = StringHelper::StringToWide(window_class);
     this->width = width;
     this->height = height;
 

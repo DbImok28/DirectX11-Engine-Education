@@ -15,7 +15,7 @@ void ErrorLogger::Log(std::wstring message)
 void ErrorLogger::Log(HRESULT hr, std::string message)
 {
 	_com_error error(hr);
-	std::wstring err_msg = L"Error: " + StringConverter::StringToWide(message) + L"\n" + error.ErrorMessage();
+	std::wstring err_msg = L"Error: " + StringHelper::StringToWide(message) + L"\n" + error.ErrorMessage();
 	MessageBoxW(NULL, err_msg.c_str(), L"Error", MB_ICONERROR);
 }
 

@@ -5,13 +5,37 @@ template<class T>
 class VertexBuffer
 {
 private:
-	VertexBuffer(const VertexBuffer<T>& vb);
-private:
 	com_ptr<ID3D11Buffer> buffer;
-	std::unique_ptr<UINT> stride;
+	UINT stride = sizeof(T);
 	UINT bufferSize = 0;
 public:
 	VertexBuffer(){}
+	VertexBuffer(const VertexBuffer<T>& vb)
+		:buffer(vb.buffer), bufferSize(vb.bufferSize), stride(vb.stride)
+	{
+	}
+	VertexBuffer<T>& operator=(const VertexBuffer<T>& vb)
+	{
+		buffer = vb.buffer;
+		bufferSize = vb.bufferSize;
+		stride = vb.stride;
+		return *this;
+	}
+	VertexBuffer(VertexBuffer&& vb) noexcept
+		:buffer(std::move(vb.buffer)), bufferSize(std::move(vb.bufferSize)), stride(std::move(vb.stride))
+	{
+		vb.buffer = nullptr;
+		vb.bufferSize = 0;
+		vb.stride = nullptr;
+	}
+	VertexBuffer<T>& operator=(VertexBuffer<T>&& vb) noexcept
+	{
+		buffer = std::move(vb.buffer);
+		bufferSize = std::move(vb.bufferSize);
+		stride = std::move(vb.stride);
+		return *this;
+	}
+
 	ID3D11Buffer* Get() const noexcept
 	{
 		return buffer.Get();
@@ -20,32 +44,30 @@ public:
 	{
 		return buffer.GetAddressOf();
 	}
-	UINT BufferSize() const noexcept
+	UINT VertexCount() const noexcept
 	{
 		return bufferSize;
 	}
 	const UINT Stride() const noexcept
 	{
-		return *stride.get();
+		return stride;
 	}
 	const UINT* StridePtr() const noexcept
 	{
-		return stride.get();
+		return &stride;
 	}
-	HRESULT Initialize(ID3D11Device* device, T* data, UINT numVertices)
+	HRESULT Initialize(ID3D11Device* device, T* data, UINT vertexCount)
 	{
 		if (buffer.Get() != nullptr)
 			buffer.Reset();
 
-		bufferSize = numVertices;
-		if(stride.get() == nullptr)
-			stride = std::make_unique<UINT>(sizeof(T));
+		bufferSize = vertexCount;
 
 		D3D11_BUFFER_DESC vertexBufferDesc;
 		ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 
-		vertexBufferDesc.ByteWidth = sizeof(T) * numVertices;
-		vertexBufferDesc.StructureByteStride = sizeof(T);
+		vertexBufferDesc.ByteWidth = stride * vertexCount;
+		vertexBufferDesc.StructureByteStride = stride;
 		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vertexBufferDesc.CPUAccessFlags = 0;

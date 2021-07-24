@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class StringConverter
+class StringHelper
 {
 public:
 	static std::wstring StringToWide(std::string str);

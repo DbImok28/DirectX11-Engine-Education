@@ -56,9 +56,9 @@ void Graphics::RenderFrame()
 		/*cb_ps_PixelShader.data.alpha = 1.0f;
 		if (!cb_ps_PixelShader.ApplyChanges()) return;
 		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());*/
-		model.SetPosition(pos[0], pos[1], pos[2]);
-		model.SetRotation(rot[0], rot[1], rot[2]);
-		model.Draw(viewProjectonMatrix);
+		gameObject.SetPosition(pos[0], pos[1], pos[2]);
+		gameObject.SetRotation(rot[0], rot[1], rot[2]);
+		gameObject.Draw(viewProjectonMatrix);
 	}
 	// fps
 	static int fpsCount = 0;
@@ -73,7 +73,7 @@ void Graphics::RenderFrame()
 
 	// Draw text
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), StringConverter::StringToWide(fpsStr).c_str(), DirectX::XMFLOAT2(0.0f, 0.0f),  DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	spriteFont->DrawString(spriteBatch.get(), StringHelper::StringToWide(fpsStr).c_str(), DirectX::XMFLOAT2(0.0f, 0.0f),  DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
 	spriteBatch->End();
 
 	// Start ImGui frame
@@ -296,8 +296,12 @@ bool Graphics::InitializeScene()
 		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_ps_PixelShader).");
 
 		// Model
-		if (!model.Initialize(device.Get(), deviceContext.Get(), concreteTexture.Get(), cb_vs_VertexShader))
-			return false;
+		/*if (!gameObject.Initialize("Data\\Object\\Simple\\Cube2colors.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;*/
+		/*if (!gameObject.Initialize("Data\\Object\\Simple\\undep2.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;*/
+		/*if (!gameObject.Initialize("Data\\Object\\Simple\\blueCube.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;*/
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
 		camera.SetPosition(0.0f, 0.0f, -2.0f);
