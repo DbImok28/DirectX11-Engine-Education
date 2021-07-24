@@ -41,94 +41,25 @@ void Graphics::RenderFrame()
 
 	deviceContext->IASetInputLayout(vertexShader.GatInputLoyout());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//deviceContext->RSSetState(rasterizerState.Get());
+	deviceContext->RSSetState(rasterizerState.Get());
 	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
-	deviceContext->OMSetBlendState(blendState.Get(), NULL, 0xFFFFFFFF);
-
+	//deviceContext->OMSetBlendState(blendState.Get(), NULL, 0xFFFFFFFF);
+	deviceContext->OMSetBlendState(NULL, NULL, 0xFFFFFFFF);
 	deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
-	
 
-
-
-
-
-	// world;
-	//XMMATRIX world = XMMatrixIdentity();
-	static float alpha = 0.5f;
-
-
-	//{ // MyTexture
-	//	static float translationOffset[3]{ 0,0,4.0f };
-	//	XMMATRIX world = XMMatrixScaling(10.0f, 10.0f, 10.0f) * XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
-
-	//	// Constant buffer
-	//	cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-	//	cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
-	//	if (!cb_vs_VertexShader.ApplyChanges()) return;
-	//	deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
-
-	//	cb_ps_PixelShader.data.alpha = 1.0f;
-	//	if (!cb_ps_PixelShader.ApplyChanges()) return;
-	//	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
-
-	//	UINT offset = 0;
-	//	deviceContext->PSSetShaderResources(0, 1, myTexture.GetAddressOf());
-	//	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-	//	deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	//	deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
-	//}
+	static float pos[3] = { 0.0f, 0.0f, 0.0f };
+	static float rot[3] = { 0.0f, 0.0f, 0.0f };
+	XMMATRIX viewProjectonMatrix = camera.GetViewMatrix() * camera.GetProjectionMatrix();
 	{ // Concrete
-		static float translationOffset[3]{ 0,0,-2 };
-		XMMATRIX world = XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
-
-		// Constant buffer
-		cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-		cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
-		if (!cb_vs_VertexShader.ApplyChanges()) return;
-		deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
-
-		cb_ps_PixelShader.data.alpha = alpha;
+		/*cb_ps_PixelShader.data.alpha = 1.0f;
 		if (!cb_ps_PixelShader.ApplyChanges()) return;
-		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
-
-		UINT offset = 0;
-		deviceContext->PSSetShaderResources(0, 1, concreteTexture.GetAddressOf());
-		deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-		deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-
-		//deviceContext->RSSetState(rasterizerState_CullFront.Get());
-		//deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
-		deviceContext->RSSetState(rasterizerState.Get());
-		deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
+		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());*/
+		model.SetPosition(pos[0], pos[1], pos[2]);
+		model.SetRotation(rot[0], rot[1], rot[2]);
+		model.Draw(viewProjectonMatrix);
 	}
-	{ // Grass
-		static float translationOffset[3]{ 2,0,-2 };
-		XMMATRIX world = XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
-
-		// Constant buffer
-		cb_vs_VertexShader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-		cb_vs_VertexShader.data.mat = XMMatrixTranspose(cb_vs_VertexShader.data.mat);
-		if (!cb_vs_VertexShader.ApplyChanges()) return;
-		deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader.GetAddressOf());
-
-		cb_ps_PixelShader.data.alpha = 0.5f;
-		if (!cb_ps_PixelShader.ApplyChanges()) return;
-		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());
-
-		UINT offset = 0;
-		deviceContext->PSSetShaderResources(0, 1, grassTexture.GetAddressOf());
-		deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-		deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-		deviceContext->DrawIndexed(indexBuffer.BufferSize(), 0, 0);
-	}
-
-
-
-
-
-
 	// fps
 	static int fpsCount = 0;
 	static std::string fpsStr = "FPS: 0";
@@ -151,8 +82,10 @@ void Graphics::RenderFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	ImGui::Begin("Test");
-	ImGui::DragFloat("Alpha", &alpha, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("pos", pos, 0.1f);
+	ImGui::DragFloat3("rot", rot, 0.1f);
 	ImGui::End();
+	
 	ImGui::Begin("Settings");
 	ImGui::Checkbox("VSync", &VerticalSync);
 	ImGui::End();
@@ -345,38 +278,8 @@ bool Graphics::InitializeScene()
 {
 	try
 	{
-		// Vertices
-		Vertex v[]
-		{
-			{-0.5f, -0.5f, -0.5f, 0.0f, 1.0f}, // front
-			{-0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
-			{ 0.5f,  0.5f, -0.5f, 1.0f, 0.0f},
-			{ 0.5f, -0.5f, -0.5f, 1.0f, 1.0f},
-
-			{-0.5f, -0.5f, 0.5f, 0.0f, 1.0f}, // back
-			{-0.5f,  0.5f, 0.5f, 0.0f, 0.0f},
-			{ 0.5f,  0.5f, 0.5f, 1.0f, 0.0f},
-			{ 0.5f, -0.5f, 0.5f, 1.0f, 1.0f},
-		};
-
-		HRESULT hr = vertexBuffer.Initialize(device.Get(), v, ARRAYSIZE(v));
-		COM_ERROR_IF(hr, "Failed to initialize vertex buffer.");
-
-		// Indices
-		DWORD indices[] =
-		{
-			0, 1, 2, 0, 2, 3, // front
-			4, 7, 6, 4, 6, 5, // back
-			3, 2, 6, 3, 6, 7, // right
-			4, 5, 1, 4, 1, 0, // left
-			1, 5, 6, 1, 6, 2, // top
-			0, 3, 7, 0, 7, 4, // bottom
-		};
-		hr = indexBuffer.Initialize(device.Get(), indices, ARRAYSIZE(indices));
-		COM_ERROR_IF(hr, "Failed to initialize index buffer.");
-
 		// load texture
-		hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\myImg.jpg", nullptr, myTexture.GetAddressOf());
+		HRESULT hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\myImg.jpg", nullptr, myTexture.GetAddressOf());
 		COM_ERROR_IF(hr, "Failed to load texture from file.");
 
 		hr = DirectX::CreateWICTextureFromFile(device.Get(), L"Data\\Textures\\concrete.jpg", nullptr, concreteTexture.GetAddressOf());
@@ -392,6 +295,9 @@ bool Graphics::InitializeScene()
 		hr = cb_ps_PixelShader.Initialize(device.Get(), deviceContext.Get());
 		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_ps_PixelShader).");
 
+		// Model
+		if (!model.Initialize(device.Get(), deviceContext.Get(), concreteTexture.Get(), cb_vs_VertexShader))
+			return false;
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
 		camera.SetPosition(0.0f, 0.0f, -2.0f);

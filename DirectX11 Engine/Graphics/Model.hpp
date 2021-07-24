@@ -1,17 +1,17 @@
 #pragma once
-#include "../Base.hpp"
-#include <DirectXMath.h>
+#include "Vertex.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
+#include "ConstantBuffer.hpp"
 
 using namespace DirectX;
 
-class Camera
+class Model
 {
 public:
-	Camera();
-	void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
-
-	const XMMATRIX& GetViewMatrix() const noexcept;
-	const XMMATRIX& GetProjectionMatrix() const noexcept;
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* texture, ConstantBuffer<CB_VS_VertexShader>& cb_vs_VertexShader);
+	void SetTexture(ID3D11ShaderResourceView* texture);
+	void Draw(const XMMATRIX& viewProjectionMatrix);
 
 	const XMVECTOR& GetPositionVector() const noexcept;
 	const XMFLOAT3& GetPositionFloat3() const noexcept;
@@ -38,19 +38,27 @@ public:
 	void AdjustRotation(float x, float y, float z) noexcept;
 	void SetLookAtPos(XMFLOAT3) noexcept;
 private:
-	void UpdateViewMatrix() noexcept;
+	void UpdateWorldMatrix();
+	ID3D11Device* device;
+	ID3D11DeviceContext* deviceContext;
+	ConstantBuffer<CB_VS_VertexShader>* cb_vs_VertexShader;
+	ID3D11ShaderResourceView* texture = nullptr;
+
+	VertexBuffer<Vertex> vertexBuffer;
+	IndexBuffer indexBuffer;
+
+	XMMATRIX worldMatrix = XMMatrixIdentity();
+
 	XMVECTOR posVector;
 	XMVECTOR rotVector;
 	XMFLOAT3 pos;
 	XMFLOAT3 rot;
-	XMMATRIX viewMatrix;
-	XMMATRIX projectionMatrix;
 
-	const XMVECTOR DEFAULT_FORWARD_VECTOR	= XMVectorSet( 0.0f,  0.0f, 1.0f, 0.0f);	// z // ось вверх!!!
-	const XMVECTOR DEFAULT_UP_VECTOR		= XMVectorSet( 0.0f,  1.0f, 0.0f, 0.0f);	// y // ось вперед!!!
-	const XMVECTOR DEFAULT_BACKWARD_VECTOR	= XMVectorSet( 0.0f, 0.0f, -1.0f, 0.0f);
-	const XMVECTOR DEFAULT_RIGHT_VECTOR		= XMVectorSet( 1.0f,  0.0f, 0.0f, 0.0f);
-	const XMVECTOR DEFAULT_LEFT_VECTOR		= XMVectorSet(-1.0f,  0.0f, 0.0f, 0.0f);
+	const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	const XMVECTOR DEFAULT_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);	
+	const XMVECTOR DEFAULT_BACKWARD_VECTOR = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+	const XMVECTOR DEFAULT_RIGHT_VECTOR = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const XMVECTOR DEFAULT_LEFT_VECTOR = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
 
 	XMVECTOR vec_forward;
 	XMVECTOR vec_backward;

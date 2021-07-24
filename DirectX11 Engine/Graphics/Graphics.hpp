@@ -8,11 +8,7 @@
 #include "AdapterReader.hpp"
 #include "Camera.hpp"
 #include "Shaders.hpp"
-#include "Vertex.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
-#include "ConstantBufferTypes.hpp"
-#include "ConstantBuffer.hpp"
+#include "Model.hpp"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -38,10 +34,10 @@ private:
 	VertexShader vertexShader;
 	PixelShader pixelShader;
 
-	VertexBuffer<Vertex> vertexBuffer;
-	IndexBuffer indexBuffer;
 	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
 	ConstantBuffer<CB_PS_PixelShader> cb_ps_PixelShader;
+
+	Model model;
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;
 	com_ptr<ID3D11Texture2D> depthStencilBuffer;

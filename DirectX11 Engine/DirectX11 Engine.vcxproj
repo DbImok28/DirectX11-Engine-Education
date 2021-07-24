@@ -164,7 +164,7 @@
     <ClCompile Include="Graphics\IndexBuffer.cpp" />
     <ClCompile Include="Keyboard\KeyboardClass.cpp" />
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
@@ -197,7 +197,7 @@
     <ClInclude Include="Graphics\IndexBuffer.hpp" />
     <ClInclude Include="Keyboard\KeyboardClass.hpp" />
     <ClInclude Include="Keyboard\KeyboardEvent.hpp" />
-    <ClInclude Include="Model.hpp" />
+    <ClInclude Include="Graphics\Model.hpp" />
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />

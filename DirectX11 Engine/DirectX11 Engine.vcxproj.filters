@@ -120,8 +120,8 @@
     <ClCompile Include="Exceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Graphics\Model.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,8 +218,8 @@
     <ClInclude Include="Exceptions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graphics\Model.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
