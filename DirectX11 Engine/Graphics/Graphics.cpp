@@ -302,6 +302,10 @@ bool Graphics::InitializeScene()
 			return false;*/
 		/*if (!gameObject.Initialize("Data\\Object\\Simple\\blueCube.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;*/
+		if (!gameObject.Initialize("Data\\Object\\Simple\\textureBox.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;
+		/*if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;*/
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
 		camera.SetPosition(0.0f, 0.0f, -2.0f);

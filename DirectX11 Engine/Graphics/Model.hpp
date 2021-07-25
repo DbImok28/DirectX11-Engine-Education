@@ -10,8 +10,8 @@ public:
 	void Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix);
 private:
 	bool LoadModel(const std::string& path);
-	void ProcessNode(aiNode* node, const aiScene* scene);
-	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	void ProcessNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix);
+	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& transformMatrix);
 	TextureStorageType DetermineTextureStorageType(const aiScene* scene, aiMaterial* pMaterial, unsigned int index, aiTextureType textureType);
 	std::vector<Texture> LoadMaterialTextures(aiMaterial* pMaterial, aiTextureType textureType, const aiScene* scene);
 	int GetTextureIndex(aiString* pStr);

@@ -21,14 +21,13 @@ bool Model::Initialize(std::string path, ID3D11Device* device, ID3D11DeviceConte
 
 void Model::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatrix)
 {
-	cb_vs_VertexShader->data.mat = worldMatrix * viewProjectionMatrix;
-	cb_vs_VertexShader->data.mat = XMMatrixTranspose(cb_vs_VertexShader->data.mat);
-	//if (!cb_vs_VertexShader->ApplyChanges()) return;
-	cb_vs_VertexShader->ApplyChanges();
 	deviceContext->VSSetConstantBuffers(0, 1, cb_vs_VertexShader->GetAddressOf());
 
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
+		cb_vs_VertexShader->data.mat = meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
+		cb_vs_VertexShader->data.mat = XMMatrixTranspose(cb_vs_VertexShader->data.mat);
+		cb_vs_VertexShader->ApplyChanges();
 		meshes[i].Draw();
 	}
 
@@ -45,24 +44,25 @@ bool Model::LoadModel(const std::string& path)
 	if (pScene == nullptr)
 		return false;
 
-	ProcessNode(pScene->mRootNode, pScene);
+	ProcessNode(pScene->mRootNode, pScene, XMMatrixIdentity());
 	return true;
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene)
+void Model::ProcessNode(aiNode* node, const aiScene* scene, const XMMATRIX& parentTransformMatrix)
 {
+	XMMATRIX nodeTranformMatrix = XMMatrixTranspose(XMMATRIX(&node->mTransformation.a1)) * parentTransformMatrix;
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(ProcessMesh(mesh, scene));
+		meshes.push_back(ProcessMesh(mesh, scene, nodeTranformMatrix));
 	}
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(node->mChildren[i], scene);
+		ProcessNode(node->mChildren[i], scene, nodeTranformMatrix);
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& transformMatrix)
 {
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
@@ -95,7 +95,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> diffuseTextures = LoadMaterialTextures(material, aiTextureType::aiTextureType_DIFFUSE, scene);
 	textures.insert(textures.end(), diffuseTextures.begin(), diffuseTextures.end());
 
-	return Mesh(device, deviceContext, vertices, indices, textures);
+	return Mesh(device, deviceContext, vertices, indices, textures, transformMatrix);
 }
 
 TextureStorageType Model::DetermineTextureStorageType(const aiScene* scene, aiMaterial* pMaterial, unsigned int index, aiTextureType textureType)
