@@ -35,6 +35,9 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 */
 void Graphics::RenderFrame()
 {
+	cb_ps_Light.data.dynamicLightColor = light.lightColor;
+	cb_ps_Light.data.dynamicLightStrength = light.lightStrength;
+	cb_ps_Light.data.dynamicLightPosition = light.GetPositionFloat3();
 	if (!cb_ps_Light.ApplyChanges()) return;
 	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_Light.GetAddressOf());
 
@@ -52,13 +55,21 @@ void Graphics::RenderFrame()
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
+	XMMATRIX viewProjectonMatrix = camera.GetViewMatrix() * camera.GetProjectionMatrix();
 	static float pos[3] = { 0.0f, 0.0f, 0.0f };
 	static float rot[3] = { 0.0f, 0.0f, 0.0f };
-	XMMATRIX viewProjectonMatrix = camera.GetViewMatrix() * camera.GetProjectionMatrix();
+
 	{ // Concrete
 		gameObject.SetPosition(pos[0], pos[1], pos[2]);
 		gameObject.SetRotation(rot[0], rot[1], rot[2]);
 		gameObject.Draw(viewProjectonMatrix);
+	}
+
+
+	//static float lpos[3] = { 0.0f, 0.0f, 0.0f };
+	{ // light
+		deviceContext->PSSetShader(pixelShaderNoLight.GetShader(), NULL, 0);
+		light.Draw(viewProjectonMatrix);
 	}
 	// fps
 	static int fpsCount = 0;
@@ -84,6 +95,8 @@ void Graphics::RenderFrame()
 	ImGui::Begin("Test");
 	ImGui::DragFloat3("pos", pos, 0.1f);
 	ImGui::DragFloat3("rot", rot, 0.1f);
+	ImGui::NewLine();
+	//ImGui::DragFloat3("light pos", lpos, 0.1f);
 	ImGui::End();
 
 	ImGui::Begin("Light");
@@ -277,6 +290,8 @@ bool Graphics::InitializeShader()
 
 	if (!pixelShader.Initalize(device, Paths::ShaderFolder + L"PixelShader.cso"))
 		return false;
+	if (!pixelShaderNoLight.Initalize(device, Paths::ShaderFolder + L"PixelShader_NoLight.cso"))
+		return false;
 	
 	return true;
 }
@@ -305,16 +320,11 @@ bool Graphics::InitializeScene()
 		cb_ps_Light.data.ambientLightStrength = 0.5;
 
 		// Model
-		/*if (!gameObject.Initialize("Data\\Object\\Simple\\Cube2colors.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
-			return false;*/
-		/*if (!gameObject.Initialize("Data\\Object\\Simple\\undep2.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
-			return false;*/
-		/*if (!gameObject.Initialize("Data\\Object\\Simple\\blueCube.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
-			return false;*/
-		if (!gameObject.Initialize("Data\\Object\\Simple\\dodge_challenger.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+		
+		if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;
-		/*if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
-			return false;*/
+		if (!light.Initialize(device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+			return false;
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
 		camera.SetPosition(0.0f, 0.0f, -2.0f);

@@ -9,6 +9,7 @@
 #include "Camera.hpp"
 #include "Shaders.hpp"
 #include "RenderableGameObject.hpp"
+#include "Light.hpp"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -22,6 +23,7 @@ public:
 
 	Camera camera;
 	RenderableGameObject gameObject;
+	Light light;
 private:
 	bool InitializeDirectX(HWND hWnd);
 	bool InitializeShader();
@@ -34,6 +36,7 @@ private:
 
 	VertexShader vertexShader;
 	PixelShader pixelShader;
+	PixelShader pixelShaderNoLight;
 
 	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
 	ConstantBuffer<CB_PS_Light> cb_ps_Light;

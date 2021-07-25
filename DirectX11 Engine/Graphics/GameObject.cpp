@@ -20,24 +20,36 @@ const XMFLOAT3& GameObject::GetRotationFloat3() const noexcept
 	return rot;
 }
 
-const XMVECTOR& GameObject::GetForwardVector() const noexcept
+const XMVECTOR& GameObject::GetForwardVector(bool omitY) const noexcept
 {
-	return vec_forward;
+	if(omitY)
+		return vec_forward_noY;
+	else
+		return vec_forward;
 }
 
-const XMVECTOR& GameObject::GetBackwardVector() const noexcept
+const XMVECTOR& GameObject::GetBackwardVector(bool omitY) const noexcept
 {
-	return vec_backward;
+	if (omitY)
+		return vec_backward_noY;
+	else
+		return vec_backward;
 }
 
-const XMVECTOR& GameObject::GetRightVector() const noexcept
+const XMVECTOR& GameObject::GetRightVector(bool omitY) const noexcept
 {
-	return vec_right;
+	if (omitY)
+		return vec_right_noY;
+	else
+		return vec_right;
 }
 
-const XMVECTOR& GameObject::GetLeftVector() const noexcept
+const XMVECTOR& GameObject::GetLeftVector(bool omitY) const noexcept
 {
-	return vec_left;
+	if (omitY)
+		return vec_left_noY;
+	else
+		return vec_left;
 }
 
 void GameObject::SetPosition(const XMVECTOR& pos) noexcept
@@ -159,4 +171,19 @@ void GameObject::SetLookAtPos(XMFLOAT3 lookAtPos) noexcept
 void GameObject::UpdateMatrix()
 {
 	assert("no overridden" && 0);
+}
+
+void GameObject::UpdateDirectionVectors()
+{
+	XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, 0.0f);
+	vec_forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+	vec_backward = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
+	vec_right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+	vec_left = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
+
+	vecRotationMatrix = XMMatrixRotationRollPitchYaw(0.0f, rot.y, 0.0f);
+	vec_forward_noY = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+	vec_backward_noY = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
+	vec_right_noY = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+	vec_left_noY = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
 }

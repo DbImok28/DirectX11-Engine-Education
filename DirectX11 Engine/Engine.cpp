@@ -38,7 +38,7 @@ void Engine::Update()
         }
     }
 
-    float cameraSpeed = 800.0f;
+    float cameraSpeed = 20.0f;
 
     if (keyboard.KeyIsPressed(VK_ESCAPE))
     {
@@ -67,6 +67,13 @@ void Engine::Update()
     if (keyboard.KeyIsPressed('Z'))
     {
         gfx.camera.AdjustPosition(0.0f, -cameraSpeed * deltaTime, 0.0f);
+    }
+    if (keyboard.KeyIsPressed('C'))
+    {
+        auto lpos = gfx.camera.GetPositionVector();
+        lpos += gfx.camera.GetForwardVector() * 2;
+        gfx.light.SetRotation(gfx.camera.GetRotationFloat3());
+        gfx.light.SetPosition(lpos);
     }
 }
 

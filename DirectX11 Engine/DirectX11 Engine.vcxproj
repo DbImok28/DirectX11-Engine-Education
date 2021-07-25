@@ -172,6 +172,7 @@
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="Graphics\Light.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Keyboard\KeyboardEvent.hpp" />
     <ClInclude Include="Graphics\Model.hpp" />
     <ClInclude Include="Graphics\Mesh.hpp" />
+    <ClInclude Include="Graphics\Light.hpp" />
     <ClInclude Include="Mouse\MouseClass.hpp" />
     <ClInclude Include="Mouse\MouseEvent.hpp" />
     <ClInclude Include="Paths.hpp" />
@@ -243,6 +245,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="PixelShader_NoLight.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

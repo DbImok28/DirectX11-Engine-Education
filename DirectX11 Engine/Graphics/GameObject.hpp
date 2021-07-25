@@ -9,10 +9,10 @@ public:
 	const XMVECTOR& GetRotationVector() const noexcept;
 	const XMFLOAT3& GetRotationFloat3() const noexcept;
 
-	const XMVECTOR& GetForwardVector() const noexcept;
-	const XMVECTOR& GetBackwardVector() const noexcept;
-	const XMVECTOR& GetRightVector() const noexcept;
-	const XMVECTOR& GetLeftVector() const noexcept;
+	const XMVECTOR& GetForwardVector(bool omitY = false) const noexcept;
+	const XMVECTOR& GetBackwardVector(bool omitY = false) const noexcept;
+	const XMVECTOR& GetRightVector(bool omitY = false) const noexcept;
+	const XMVECTOR& GetLeftVector(bool omitY = false) const noexcept;
 
 	void SetPosition(const XMVECTOR& pos) noexcept;
 	void SetPosition(const XMFLOAT3& pos) noexcept;
@@ -31,6 +31,7 @@ public:
 
 protected:
 	virtual void UpdateMatrix();
+	void UpdateDirectionVectors();
 
 	XMVECTOR posVector;
 	XMVECTOR rotVector;
@@ -47,4 +48,9 @@ protected:
 	XMVECTOR vec_backward;
 	XMVECTOR vec_right;
 	XMVECTOR vec_left;
+
+	XMVECTOR vec_forward_noY;
+	XMVECTOR vec_backward_noY;
+	XMVECTOR vec_right_noY;
+	XMVECTOR vec_left_noY;
 };
