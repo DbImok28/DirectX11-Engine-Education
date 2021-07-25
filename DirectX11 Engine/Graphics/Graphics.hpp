@@ -36,7 +36,7 @@ private:
 	PixelShader pixelShader;
 
 	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
-	ConstantBuffer<CB_PS_PixelShader> cb_ps_PixelShader;
+	ConstantBuffer<CB_PS_Light> cb_ps_Light;
 
 
 	com_ptr<ID3D11DepthStencilView> depthStencilView;

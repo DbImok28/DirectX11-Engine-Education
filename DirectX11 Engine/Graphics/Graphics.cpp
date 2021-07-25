@@ -35,6 +35,9 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 */
 void Graphics::RenderFrame()
 {
+	if (!cb_ps_Light.ApplyChanges()) return;
+	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_Light.GetAddressOf());
+
 	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -53,9 +56,6 @@ void Graphics::RenderFrame()
 	static float rot[3] = { 0.0f, 0.0f, 0.0f };
 	XMMATRIX viewProjectonMatrix = camera.GetViewMatrix() * camera.GetProjectionMatrix();
 	{ // Concrete
-		/*cb_ps_PixelShader.data.alpha = 1.0f;
-		if (!cb_ps_PixelShader.ApplyChanges()) return;
-		deviceContext->PSSetConstantBuffers(0, 1, cb_ps_PixelShader.GetAddressOf());*/
 		gameObject.SetPosition(pos[0], pos[1], pos[2]);
 		gameObject.SetRotation(rot[0], rot[1], rot[2]);
 		gameObject.Draw(viewProjectonMatrix);
@@ -85,7 +85,13 @@ void Graphics::RenderFrame()
 	ImGui::DragFloat3("pos", pos, 0.1f);
 	ImGui::DragFloat3("rot", rot, 0.1f);
 	ImGui::End();
-	
+
+	ImGui::Begin("Light");
+	ImGui::NewLine();
+	ImGui::DragFloat3("Ambient Light Color", &cb_ps_Light.data.ambientLightColor.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Ambient Light Strength", &cb_ps_Light.data.ambientLightStrength, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+
 	ImGui::Begin("Settings");
 	ImGui::Checkbox("VSync", &VerticalSync);
 	ImGui::End();
@@ -292,8 +298,10 @@ bool Graphics::InitializeScene()
 		hr = cb_vs_VertexShader.Initialize(device.Get(), deviceContext.Get());
 		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_vs_VertexShader).");
 
-		hr = cb_ps_PixelShader.Initialize(device.Get(), deviceContext.Get());
-		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_ps_PixelShader).");
+		hr = cb_ps_Light.Initialize(device.Get(), deviceContext.Get());
+		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_ps_Light).");
+		cb_ps_Light.data.ambientLightColor = { 1.0f,1.0f ,1.0f };
+		cb_ps_Light.data.ambientLightStrength = 0.5;
 
 		// Model
 		/*if (!gameObject.Initialize("Data\\Object\\Simple\\Cube2colors.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
