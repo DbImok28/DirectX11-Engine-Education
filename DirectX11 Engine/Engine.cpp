@@ -34,7 +34,7 @@ void Engine::Update()
         auto e = mouse.ReadEvent();
         if (!keyboard.KeyIsPressed(VK_SHIFT) && e.GetType() == MouseEvent::EventType::RawMove)
         {
-            gfx.camera.AdjustRotation(e.GetPosY() * cameraRotSpeed, e.GetPosX() * cameraRotSpeed, 0.0f);
+            gfx.Camera3D.AdjustRotation(e.GetPosY() * cameraRotSpeed, e.GetPosX() * cameraRotSpeed, 0.0f);
         }
     }
 
@@ -46,33 +46,33 @@ void Engine::Update()
     }
     if (keyboard.KeyIsPressed('W'))
     {
-        gfx.camera.AdjustPosition(gfx.camera.GetForwardVector() * cameraSpeed * deltaTime);
+        gfx.Camera3D.AdjustPosition(gfx.Camera3D.GetForwardVector() * cameraSpeed * deltaTime);
     }
     if (keyboard.KeyIsPressed('S'))
     {
-        gfx.camera.AdjustPosition(gfx.camera.GetBackwardVector() * cameraSpeed * deltaTime);
+        gfx.Camera3D.AdjustPosition(gfx.Camera3D.GetBackwardVector() * cameraSpeed * deltaTime);
     }
     if (keyboard.KeyIsPressed('A'))
     {
-        gfx.camera.AdjustPosition(gfx.camera.GetLeftVector() * cameraSpeed * deltaTime);
+        gfx.Camera3D.AdjustPosition(gfx.Camera3D.GetLeftVector() * cameraSpeed * deltaTime);
     }
     if (keyboard.KeyIsPressed('D'))
     {
-        gfx.camera.AdjustPosition(gfx.camera.GetRightVector() * cameraSpeed * deltaTime);
+        gfx.Camera3D.AdjustPosition(gfx.Camera3D.GetRightVector() * cameraSpeed * deltaTime);
     }
     if (keyboard.KeyIsPressed(VK_SPACE))
     {
-        gfx.camera.AdjustPosition(0.0f, cameraSpeed * deltaTime, 0.0f);
+        gfx.Camera3D.AdjustPosition(0.0f, cameraSpeed * deltaTime, 0.0f);
     }
     if (keyboard.KeyIsPressed('Z'))
     {
-        gfx.camera.AdjustPosition(0.0f, -cameraSpeed * deltaTime, 0.0f);
+        gfx.Camera3D.AdjustPosition(0.0f, -cameraSpeed * deltaTime, 0.0f);
     }
     if (keyboard.KeyIsPressed('C'))
     {
-        auto lpos = gfx.camera.GetPositionVector();
-        lpos += gfx.camera.GetForwardVector() * 2;
-        gfx.light.SetRotation(gfx.camera.GetRotationFloat3());
+        auto lpos = gfx.Camera3D.GetPositionVector();
+        lpos += gfx.Camera3D.GetForwardVector() * 2;
+        gfx.light.SetRotation(gfx.Camera3D.GetRotationFloat3());
         gfx.light.SetPosition(lpos);
     }
 }

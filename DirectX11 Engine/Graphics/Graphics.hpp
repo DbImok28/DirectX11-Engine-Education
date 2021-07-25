@@ -6,7 +6,7 @@
 #include "../Paths.hpp"
 #include "../Timer.hpp"
 #include "AdapterReader.hpp"
-#include "Camera.hpp"
+#include "Camera3D.hpp"
 #include "Shaders.hpp"
 #include "RenderableGameObject.hpp"
 #include "Light.hpp"
@@ -21,7 +21,7 @@ public:
 	bool Initialize(HWND hWnd, int width, int height);
 	void RenderFrame();
 
-	Camera camera;
+	Camera3D Camera3D;
 	RenderableGameObject gameObject;
 	Light light;
 private:

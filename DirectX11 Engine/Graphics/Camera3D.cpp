@@ -1,6 +1,6 @@
-#include "Camera.hpp"
+#include "Camera3D.hpp"
 
-Camera::Camera()
+Camera3D::Camera3D()
 {
 	pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	posVector = XMLoadFloat3(&pos);
@@ -9,23 +9,23 @@ Camera::Camera()
 	UpdateMatrix();
 }
 
-void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+void Camera3D::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 {
 	float fovRadians = (fovDegrees / 360.0f) * XM_2PI;
 	projectionMatrix = XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, nearZ, farZ);
 }
 
-const XMMATRIX& Camera::GetViewMatrix() const noexcept
+const XMMATRIX& Camera3D::GetViewMatrix() const noexcept
 {
 	return viewMatrix;
 }
 
-const XMMATRIX& Camera::GetProjectionMatrix() const noexcept
+const XMMATRIX& Camera3D::GetProjectionMatrix() const noexcept
 {
 	return projectionMatrix;
 }
 
-void Camera::UpdateMatrix()
+void Camera3D::UpdateMatrix()
 {
 	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, rot.z);
 	XMVECTOR camTarget = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, camRotationMatrix);

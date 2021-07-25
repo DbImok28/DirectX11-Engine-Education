@@ -1,7 +1,7 @@
 #pragma once
-#include "GameObject.hpp"
+#include "GameObject3D.hpp"
 
-class RenderableGameObject : public GameObject
+class RenderableGameObject : public GameObject3D
 {
 public:
 	bool Initialize(std::string path, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_VertexShader>& cb_vs_VertexShader);

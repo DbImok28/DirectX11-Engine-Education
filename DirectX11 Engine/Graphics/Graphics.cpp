@@ -60,7 +60,7 @@ void Graphics::RenderFrame()
 	deviceContext->VSSetShader(vertexShader.GetShader(), NULL, 0);
 	deviceContext->PSSetShader(pixelShader.GetShader(), NULL, 0);
 
-	XMMATRIX viewProjectonMatrix = camera.GetViewMatrix() * camera.GetProjectionMatrix();
+	XMMATRIX viewProjectonMatrix = Camera3D.GetViewMatrix() * Camera3D.GetProjectionMatrix();
 	static float pos[3] = { 0.0f, 0.0f, 0.0f };
 	static float rot[3] = { 0.0f, 0.0f, 0.0f };
 
@@ -336,8 +336,8 @@ bool Graphics::InitializeScene()
 			return false;
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
-		camera.SetPosition(0.0f, 0.0f, -2.0f);
-		camera.SetProjectionValues(90.0f, static_cast<float>(windowWidth) / static_cast<float>(windowHeight), nearZ, farZ);
+		Camera3D.SetPosition(0.0f, 0.0f, -2.0f);
+		Camera3D.SetProjectionValues(90.0f, static_cast<float>(windowWidth) / static_cast<float>(windowHeight), nearZ, farZ);
 	}
 	catch (COMException& exception)
 	{

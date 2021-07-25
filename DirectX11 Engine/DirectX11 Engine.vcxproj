@@ -112,6 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,10 +153,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Graphics\Camera2D.cpp" />
+    <ClCompile Include="Graphics\GameObject2D.cpp" />
+    <ClCompile Include="Graphics\GameObject3D.cpp" />
     <ClCompile Include="Graphics\Color.cpp" />
     <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="Graphics\GameObject.cpp" />
-    <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\Camera3D.cpp" />
     <ClCompile Include="Graphics\AdapterReader.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="ErrorLogger.cpp" />
@@ -186,10 +190,13 @@
     <ClCompile Include="Window\WindowContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Graphics\Camera2D.hpp" />
+    <ClInclude Include="Graphics\GameObject2D.hpp" />
+    <ClInclude Include="Graphics\GameObject3D.hpp" />
     <ClInclude Include="Graphics\Color.hpp" />
     <ClInclude Include="Exceptions.hpp" />
     <ClInclude Include="Graphics\GameObject.hpp" />
-    <ClInclude Include="Graphics\Camera.hpp" />
+    <ClInclude Include="Graphics\Camera3D.hpp" />
     <ClInclude Include="Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="Graphics\ConstantBufferTypes.hpp" />
     <ClInclude Include="Graphics\AdapterReader.hpp" />
