@@ -3,7 +3,8 @@
 
 struct alignas(16) CB_VS_VertexShader
 {
-	DirectX::XMMATRIX mat;
+	DirectX::XMMATRIX wvpMatrix;
+	DirectX::XMMATRIX worldMatrix;
 };
 
 /*struct alignas(16) CB_PS_PixelShader

@@ -38,7 +38,7 @@ void Graphics::RenderFrame()
 	if (!cb_ps_Light.ApplyChanges()) return;
 	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_Light.GetAddressOf());
 
-	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float bgcolor[] = { 0.05f, 0.05f, 0.05f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), bgcolor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -268,6 +268,7 @@ bool Graphics::InitializeShader()
 	{
 		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(loyout);
 
@@ -310,7 +311,7 @@ bool Graphics::InitializeScene()
 			return false;*/
 		/*if (!gameObject.Initialize("Data\\Object\\Simple\\blueCube.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;*/
-		if (!gameObject.Initialize("Data\\Object\\Simple\\Cube2colors.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
+		if (!gameObject.Initialize("Data\\Object\\Simple\\dodge_challenger.fbx",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;
 		/*if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj", device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;*/

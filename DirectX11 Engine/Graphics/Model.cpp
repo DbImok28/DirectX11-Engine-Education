@@ -25,8 +25,10 @@ void Model::Draw(const XMMATRIX& worldMatrix, const XMMATRIX& viewProjectionMatr
 
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
-		cb_vs_VertexShader->data.mat = meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
-		cb_vs_VertexShader->data.mat = XMMatrixTranspose(cb_vs_VertexShader->data.mat);
+		cb_vs_VertexShader->data.wvpMatrix = meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
+		cb_vs_VertexShader->data.worldMatrix = meshes[i].GetTransformMatrix() * worldMatrix;
+		cb_vs_VertexShader->data.wvpMatrix = XMMatrixTranspose(cb_vs_VertexShader->data.wvpMatrix);
+		cb_vs_VertexShader->data.worldMatrix = XMMatrixTranspose(cb_vs_VertexShader->data.worldMatrix);
 		cb_vs_VertexShader->ApplyChanges();
 		meshes[i].Draw();
 	}
@@ -74,6 +76,10 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& tran
 		vertex.pos.x = static_cast<float>(mesh->mVertices[i].x);
 		vertex.pos.y = static_cast<float>(mesh->mVertices[i].y);
 		vertex.pos.z = static_cast<float>(mesh->mVertices[i].z);
+
+		vertex.normal.x = static_cast<float>(mesh->mNormals[i].x);
+		vertex.normal.y = static_cast<float>(mesh->mNormals[i].y);
+		vertex.normal.z = static_cast<float>(mesh->mNormals[i].z);
 		if (mesh->mTextureCoords[0])
 		{
 			vertex.texCoord.x = static_cast<float>(mesh->mTextureCoords[0][i].x);
