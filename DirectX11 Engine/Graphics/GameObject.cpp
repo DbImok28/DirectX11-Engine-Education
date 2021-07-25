@@ -112,6 +112,14 @@ void GameObject::AdjustRotation(float x, float y, float z) noexcept
 	UpdateMatrix();
 }
 
+void GameObject::SetScale(float x, float y, float z) noexcept
+{
+	scale.x = x;
+	scale.y = y;
+	scale.z = z;
+	UpdateMatrix();
+}
+
 void GameObject::UpdateMatrix()
 {
 	assert("no overridden" && 0);

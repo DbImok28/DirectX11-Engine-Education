@@ -23,6 +23,8 @@ public:
 	void AdjustRotation(const XMFLOAT3& rot) noexcept;
 	void AdjustRotation(float x, float y, float z) noexcept;
 
+	void SetScale(float x, float y, float z = 1.0f) noexcept;
+
 protected:
 	virtual void UpdateMatrix();
 
@@ -30,4 +32,5 @@ protected:
 	XMVECTOR rotVector;
 	XMFLOAT3 pos;
 	XMFLOAT3 rot;
+	XMFLOAT3 scale;
 };

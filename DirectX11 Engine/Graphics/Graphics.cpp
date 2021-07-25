@@ -23,7 +23,7 @@ bool Graphics::Initialize(HWND hWnd, int width, int height)
 }
 /*
 *1  Input Assembler		(IA) Stage
-*2  Vertex Shader		(VS) Stage
+*2  Vertex3D Shader		(VS) Stage
 3  Hull Shader			(HS) Stage
 4  Tessellator Shader	(TS) Stage
 5  Domain Shader		(DS) Stage
@@ -63,8 +63,8 @@ void Graphics::RenderFrame()
 	XMMATRIX viewProjectonMatrix = Camera3D.GetViewMatrix() * Camera3D.GetProjectionMatrix();
 	static float pos[3] = { 0.0f, 0.0f, 0.0f };
 	static float rot[3] = { 0.0f, 0.0f, 0.0f };
-
-	{ // Concrete
+	
+	{
 		gameObject.SetPosition(pos[0], pos[1], pos[2]);
 		gameObject.SetRotation(rot[0], rot[1], rot[2]);
 		gameObject.Draw(viewProjectonMatrix);
@@ -75,6 +75,13 @@ void Graphics::RenderFrame()
 	{ // light
 		deviceContext->PSSetShader(pixelShaderNoLight.GetShader(), NULL, 0);
 		light.Draw(viewProjectonMatrix);
+	}
+
+	{ // light
+		deviceContext->IASetInputLayout(vertexShader2D.GatInputLoyout());
+		deviceContext->PSSetShader(pixelShader2D.GetShader(), NULL, 0);
+		deviceContext->VSSetShader(vertexShader2D.GetShader(), NULL, 0);
+		sprite.Draw(Camera2D.GatOrthoMatrix() * Camera2D.GatWorldMatrix());
 	}
 	// fps
 	static int fpsCount = 0;
@@ -286,17 +293,31 @@ bool Graphics::InitializeDirectX(HWND hWnd)
 
 bool Graphics::InitializeShader()
 {
-	D3D11_INPUT_ELEMENT_DESC loyout[]
+	//2d
+	D3D11_INPUT_ELEMENT_DESC loyout2d[]
+	{
+		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	UINT numElements2d = ARRAYSIZE(loyout2d);
+
+	if (!vertexShader2D.Initalize(device, Paths::ShaderFolder + L"VertexShader2D.cso", loyout2d, numElements2d))
+		return false;
+	if (!pixelShader2D.Initalize(device, Paths::ShaderFolder + L"PixelShader2D.cso"))
+		return false;
+
+
+	//3d
+	D3D11_INPUT_ELEMENT_DESC loyout3d[]
 	{
 		{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	UINT numElements = ARRAYSIZE(loyout);
+	UINT numElements3d = ARRAYSIZE(loyout3d);
 
-	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso", loyout, numElements))
+	if (!vertexShader.Initalize(device, Paths::ShaderFolder + L"VertexShader.cso", loyout3d, numElements3d))
 		return false;
-
 	if (!pixelShader.Initalize(device, Paths::ShaderFolder + L"PixelShader.cso"))
 		return false;
 	if (!pixelShaderNoLight.Initalize(device, Paths::ShaderFolder + L"PixelShader_NoLight.cso"))
@@ -320,6 +341,9 @@ bool Graphics::InitializeScene()
 		COM_ERROR_IF(hr, "Failed to load texture from file.");
 
 		// Constant buffer
+		hr = cb_vs_VertexShader_2D.Initialize(device.Get(), deviceContext.Get());
+		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_vs_VertexShader_2D).");
+
 		hr = cb_vs_VertexShader.Initialize(device.Get(), deviceContext.Get());
 		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_vs_VertexShader).");
 
@@ -330,10 +354,15 @@ bool Graphics::InitializeScene()
 
 		// Model
 		
-		//if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj",device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
-		if (!gameObject.Initialize("Data\\Object\\Simple\\plane.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
+		if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj",device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
+		//if (!gameObject.Initialize("Data\\Object\\Simple\\plane.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
 		if (!light.Initialize(device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;
+		if (!sprite.Initialize(device.Get(), deviceContext.Get(), 512, 512, "Data\\Textures\\myImg.jpg", cb_vs_VertexShader_2D)) return false;
+
+		Camera2D.SetProjectionValues(static_cast<float>(windowWidth), static_cast<float>(windowHeight), 0.0f, 1.0f);
+
+
 		float nearZ = 0.1f;
 		float farZ = 10000.0f;
 		Camera3D.SetPosition(0.0f, 0.0f, -2.0f);

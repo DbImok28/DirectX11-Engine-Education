@@ -11,6 +11,9 @@
 #include "RenderableGameObject.hpp"
 #include "Light.hpp"
 
+#include "Camera2D.hpp"
+#include "Sprite.hpp"
+
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx11.h"
@@ -20,7 +23,10 @@ class Graphics
 public:
 	bool Initialize(HWND hWnd, int width, int height);
 	void RenderFrame();
-
+	//2d
+	Camera2D Camera2D;
+	Sprite sprite;
+	//3d
 	Camera3D Camera3D;
 	RenderableGameObject gameObject;
 	Light light;
@@ -29,6 +35,10 @@ private:
 	bool InitializeShader();
 	bool InitializeScene();
 
+	//2d
+	VertexShader vertexShader2D;
+	PixelShader pixelShader2D;
+	//3d
 	com_ptr<ID3D11Device> device;
 	com_ptr<ID3D11DeviceContext> deviceContext;
 	com_ptr<IDXGISwapChain> swapchain;
@@ -39,6 +49,7 @@ private:
 	PixelShader pixelShaderNoLight;
 
 	ConstantBuffer<CB_VS_VertexShader> cb_vs_VertexShader;
+	ConstantBuffer<CB_VS_VertexShader_2D> cb_vs_VertexShader_2D;
 	ConstantBuffer<CB_PS_Light> cb_ps_Light;
 
 

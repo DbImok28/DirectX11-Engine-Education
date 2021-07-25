@@ -66,12 +66,12 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene, const XMMATRIX& pare
 
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const XMMATRIX& transformMatrix)
 {
-	std::vector<Vertex> vertices;
+	std::vector<Vertex3D> vertices;
 	std::vector<DWORD> indices;
 
 	for (UINT i = 0; i < mesh->mNumVertices; i++)
 	{
-		Vertex vertex;
+		Vertex3D vertex;
 
 		vertex.pos.x = static_cast<float>(mesh->mVertices[i].x);
 		vertex.pos.y = static_cast<float>(mesh->mVertices[i].y);
