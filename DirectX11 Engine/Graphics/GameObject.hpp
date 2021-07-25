@@ -4,9 +4,6 @@
 class GameObject
 {
 public:
-	bool Initialize(std::string path, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_VertexShader>& cb_vs_VertexShader);
-	void Draw(const XMMATRIX& viewProjectionMatrix);
-
 	const XMVECTOR& GetPositionVector() const noexcept;
 	const XMFLOAT3& GetPositionFloat3() const noexcept;
 	const XMVECTOR& GetRotationVector() const noexcept;
@@ -30,12 +27,10 @@ public:
 	void AdjustRotation(const XMVECTOR& rot) noexcept;
 	void AdjustRotation(const XMFLOAT3& rot) noexcept;
 	void AdjustRotation(float x, float y, float z) noexcept;
-	void SetLookAtPos(XMFLOAT3) noexcept;
-private:
-	Model model;
-	void UpdateWorldMatrix();
+	void SetLookAtPos(XMFLOAT3 lookAtPos) noexcept;
 
-	XMMATRIX worldMatrix = XMMatrixIdentity();
+protected:
+	virtual void UpdateMatrix();
 
 	XMVECTOR posVector;
 	XMVECTOR rotVector;

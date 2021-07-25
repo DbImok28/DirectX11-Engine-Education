@@ -176,6 +176,7 @@
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Paths.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Graphics\RenderableGameObject.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window\RenderWindow.cpp" />
     <ClCompile Include="Graphics\Shaders.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Paths.hpp" />
     <ClInclude Include="Graphics\VertexBuffer.hpp" />
     <ClInclude Include="Graphics\Texture.hpp" />
+    <ClInclude Include="Graphics\RenderableGameObject.hpp" />
     <ClInclude Include="Timer.hpp" />
     <ClInclude Include="Window\RenderWindow.hpp" />
     <ClInclude Include="Graphics\Shaders.hpp" />

@@ -1,31 +1,5 @@
 #include "GameObject.hpp"
 
-bool GameObject::Initialize(std::string path, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_VertexShader>& cb_vs_VertexShader)
-{
-	if (!model.Initialize(path, device, deviceContext, cb_vs_VertexShader))
-		return false;
-	SetPosition(0.0f, 0.0f, 0.0f);
-	SetRotation(0.0f, 0.0f, 0.0f);
-	//UpdateWorldMatrix();
-	return true;
-}
-
-void GameObject::Draw(const XMMATRIX& viewProjectionMatrix)
-{
-	model.Draw(worldMatrix, viewProjectionMatrix);
-}
-
-void GameObject::UpdateWorldMatrix()
-{
-	worldMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, rot.z) * XMMatrixTranslation(pos.x, pos.y, pos.z);
-
-	XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, 0.0f);
-	vec_forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
-	vec_backward = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
-	vec_right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
-	vec_left = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
-}
-
 const XMVECTOR& GameObject::GetPositionVector() const noexcept
 {
 	return posVector;
@@ -70,28 +44,28 @@ void GameObject::SetPosition(const XMVECTOR& pos) noexcept
 {
 	posVector = pos;
 	XMStoreFloat3(&this->pos, pos);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetPosition(const XMFLOAT3& pos) noexcept
 {
 	this->pos = pos;
 	posVector = XMLoadFloat3(&this->pos);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetPosition(float x, float y, float z) noexcept
 {
 	pos = XMFLOAT3(x, y, z);
 	posVector = XMLoadFloat3(&pos);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustPosition(const XMVECTOR& pos) noexcept
 {
 	posVector += pos;
 	XMStoreFloat3(&this->pos, posVector);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustPosition(const XMFLOAT3& pos) noexcept
@@ -100,7 +74,7 @@ void GameObject::AdjustPosition(const XMFLOAT3& pos) noexcept
 	this->pos.y += pos.y;
 	this->pos.z += pos.z;
 	posVector = XMLoadFloat3(&this->pos);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustPosition(float x, float y, float z) noexcept
@@ -109,35 +83,35 @@ void GameObject::AdjustPosition(float x, float y, float z) noexcept
 	pos.y += y;
 	pos.z += z;
 	posVector = XMLoadFloat3(&pos);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetRotation(const XMVECTOR& rot) noexcept
 {
 	rotVector = rot;
 	XMStoreFloat3(&this->rot, rot);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetRotation(const XMFLOAT3& rot) noexcept
 {
 	this->rot = rot;
 	rotVector = XMLoadFloat3(&this->rot);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetRotation(float x, float y, float z) noexcept
 {
 	rot = XMFLOAT3(x, y, z);
 	rotVector = XMLoadFloat3(&rot);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustRotation(const XMVECTOR& rot) noexcept
 {
 	rotVector += rot;
 	XMStoreFloat3(&this->rot, rotVector);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustRotation(const XMFLOAT3& rot) noexcept
@@ -146,7 +120,7 @@ void GameObject::AdjustRotation(const XMFLOAT3& rot) noexcept
 	this->rot.y += rot.y;
 	this->rot.z += rot.z;
 	rotVector = XMLoadFloat3(&this->rot);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::AdjustRotation(float x, float y, float z) noexcept
@@ -155,7 +129,7 @@ void GameObject::AdjustRotation(float x, float y, float z) noexcept
 	rot.y += y;
 	rot.z += z;
 	rotVector = XMLoadFloat3(&rot);
-	UpdateWorldMatrix();
+	UpdateMatrix();
 }
 
 void GameObject::SetLookAtPos(XMFLOAT3 lookAtPos) noexcept
@@ -180,4 +154,9 @@ void GameObject::SetLookAtPos(XMFLOAT3 lookAtPos) noexcept
 	if (lookAtPos.z > 0.0f)
 		yaw += XM_PI;
 	SetRotation(pitch, yaw, 0.0f);
+}
+
+void GameObject::UpdateMatrix()
+{
+	assert("no overridden" && 0);
 }

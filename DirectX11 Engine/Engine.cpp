@@ -38,7 +38,7 @@ void Engine::Update()
         }
     }
 
-    float cameraSpeed = 8.0f;
+    float cameraSpeed = 800.0f;
 
     if (keyboard.KeyIsPressed(VK_ESCAPE))
     {

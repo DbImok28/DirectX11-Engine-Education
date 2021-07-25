@@ -8,7 +8,7 @@
 #include "AdapterReader.hpp"
 #include "Camera.hpp"
 #include "Shaders.hpp"
-#include "GameObject.hpp"
+#include "RenderableGameObject.hpp"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -21,7 +21,7 @@ public:
 	void RenderFrame();
 
 	Camera camera;
-	GameObject gameObject;
+	RenderableGameObject gameObject;
 private:
 	bool InitializeDirectX(HWND hWnd);
 	bool InitializeShader();
