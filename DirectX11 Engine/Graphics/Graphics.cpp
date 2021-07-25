@@ -38,6 +38,11 @@ void Graphics::RenderFrame()
 	cb_ps_Light.data.dynamicLightColor = light.lightColor;
 	cb_ps_Light.data.dynamicLightStrength = light.lightStrength;
 	cb_ps_Light.data.dynamicLightPosition = light.GetPositionFloat3();
+	cb_ps_Light.data.dynamicLightAttenuation_a = light.attenuation_a;
+	cb_ps_Light.data.dynamicLightAttenuation_b = light.attenuation_b;
+	cb_ps_Light.data.dynamicLightAttenuation_c = light.attenuation_c;
+
+
 	if (!cb_ps_Light.ApplyChanges()) return;
 	deviceContext->PSSetConstantBuffers(0, 1, cb_ps_Light.GetAddressOf());
 
@@ -103,6 +108,10 @@ void Graphics::RenderFrame()
 	ImGui::NewLine();
 	ImGui::DragFloat3("Ambient Light Color", &cb_ps_Light.data.ambientLightColor.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("Ambient Light Strength", &cb_ps_Light.data.ambientLightStrength, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("Strength", &light.lightStrength, 0.01f, 0.1f, 1000.0f);
+	ImGui::DragFloat("AttenuationA", &light.attenuation_a, 0.01f, 0.1f,100.0f);
+	ImGui::DragFloat("AttenuationB", &light.attenuation_b, 0.01f, 0.0f,100.0f);
+	ImGui::DragFloat("AttenuationC", &light.attenuation_c, 0.01f, 0.0f,100.0f);
 	ImGui::End();
 
 	ImGui::Begin("Settings");
@@ -317,12 +326,12 @@ bool Graphics::InitializeScene()
 		hr = cb_ps_Light.Initialize(device.Get(), deviceContext.Get());
 		COM_ERROR_IF(hr, "Failed to initialize constant buffer(cb_ps_Light).");
 		cb_ps_Light.data.ambientLightColor = { 1.0f,1.0f ,1.0f };
-		cb_ps_Light.data.ambientLightStrength = 0.5;
+		cb_ps_Light.data.ambientLightStrength = 0.0;
 
 		// Model
 		
-		if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj",device.Get(), deviceContext.Get(), cb_vs_VertexShader))
-			return false;
+		//if (!gameObject.Initialize("Data\\Object\\nanosuit\\nanosuit.obj",device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
+		if (!gameObject.Initialize("Data\\Object\\Simple\\plane.fbx", device.Get(), deviceContext.Get(), cb_vs_VertexShader)) return false;
 		if (!light.Initialize(device.Get(), deviceContext.Get(), cb_vs_VertexShader))
 			return false;
 		float nearZ = 0.1f;

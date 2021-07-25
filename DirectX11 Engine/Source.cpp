@@ -17,7 +17,7 @@ int APIENTRY wWinMain(
 
 	Engine engine;
 
-	if (engine.Initialize(hInstance, "DirectX11 Engine", "directx11_engine", 600, 400))
+	if (engine.Initialize(hInstance, "DirectX11 Engine", "directx11_engine", 1080, 720))
 	{
 		while (engine.ProcessMessages() == true)
 		{
